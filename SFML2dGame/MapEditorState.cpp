@@ -10,9 +10,26 @@ void MapEditorState::Init() {
 	view.reset(sf::FloatRect(0, 0, windowWidth, windowHeight));
 	inputField = true;
 
-	input.setFont(_data->asset.getFont("MainMenu Font"));
-	input.setPosition(50, 50);
-	input.setCharacterSize(100);
+	inputWidth.setFont(_data->asset.getFont("MainMenu Font"));
+	inputWidth.setPosition(windowWidth/2-100, windowHeight/4);
+	inputWidth.setCharacterSize(100);
+
+	inputHeight.setFont(_data->asset.getFont("MainMenu Font"));
+	inputHeight.setPosition(windowWidth/2-100, windowHeight/2-25);
+	inputHeight.setCharacterSize(100);
+
+
+    explanationText.setFont(_data->asset.getFont("MainMenu Font"));
+	explanationText.setString("Map width:\n\nMap height:");
+    explanationText.setPosition(windowWidth / 5, windowHeight / 4);
+    explanationText.setCharacterSize(100);
+
+
+	inputName.setFont(_data->asset.getFont("MainMenu Font"));
+	inputName.setPosition(windowWidth / 2 - 100, windowHeight / 4);
+	inputName.setCharacterSize(100);
+	
+	
     initToolSprites();
 
 	
@@ -55,84 +72,136 @@ void MapEditorState::HandleInput() {
 	sf::Event event;
 
 	while (_data->window.pollEvent(event)) {
-		switch (event.type)
-		{
-		case sf::Event::Closed:
-			_data->window.close();
-			break;
-		case sf::Event::MouseWheelMoved:
-			this->scaleView(event.mouseWheel.delta);
-			break;
-		case sf::Event::KeyPressed:
-			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)) {
-				if (textNum == 1) {
-					inputField = false;
-					map = new TileMap(_data, std::stoi(mapWidthInput), std::stoi(mapHeightInput), true);
-				}
-				else {
-					textNum++;
-					mapWidthInput = mapHeightInput;
-					mapHeightInput = "";
-				}
+		if (inputField) {
+			switch (event.type) {
+				case sf::Event::KeyPressed:
+					if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)) {
+						switch (inputSizeState) {
+						case 0:
+							mapWidthInput = std::stoi(inputWidthText);
+							inputSizeState++;
+							break;
+						case 1:
+							inputField = false;
+							mapHeightInput = std::stoi(inputHeightText);
+							map = new TileMap(_data, mapWidthInput, mapHeightInput, true);
+							break;
+						}
+					}
+					else if (sf::Keyboard::isKeyPressed(sf::Keyboard::BackSpace)) {
+						switch (inputSizeState) {
+						case 0:
+							if (inputWidthText.length() != 0) {
+								inputWidthText.pop_back();
+								inputWidth.setString(inputWidthText);
+							}
+							break;
+						case 1:
+							if (inputHeightText.length() == 0) {
+								inputWidthText.pop_back();
+								inputWidth.setString(inputWidthText);
+								inputSizeState--;
+							}
+							else {
+								inputHeightText.pop_back();
+								inputHeight.setString(inputHeightText);
+							}
+							break;
+						}
+					}
+					break;
+				case sf::Event::TextEntered:
+					if (event.text.unicode != 8) {
+						switch (inputSizeState) {
+						case 0:
+							inputWidthText += event.text.unicode;
+							inputWidth.setString(inputWidthText);
+							break;
+						case 1:
+							inputHeightText += event.text.unicode;
+							inputHeight.setString(inputHeightText);
+							break;
+						}
+					}
+					break;
 			}
-			else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
-				map->endEditingMap("customMap");
-				//delete map;
-				_data->machine.RemoveState();
-			}
-			break;
-		case sf::Event::MouseMoved:
-			if (sf::Mouse::isButtonPressed(sf::Mouse::Right)) {
-				this->scrollView(sf::Vector2i(_data->input.getMousePosition(_data->window).x - mouseX, _data->input.getMousePosition(_data->window).y - mouseY));
-			}
-			break;
-		case sf::Event::MouseButtonPressed:
-					if (_data->input.isSpriteClicked(arrowButton, sf::Mouse::Left, _data->window, view)) {
-						if (visibleTools) {
-							toolCanvas.clear(sf::Color::Transparent);
-							visibleTools = false;
+		}
+		else if (endMap) {
+			switch (event.type) {
+			case sf::Event::KeyPressed:
+				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)) {
+						if (mapName.length() == 0) {
+							map->endEditingMap("customMap");
 						}
 						else {
-							toolCanvas.clear(sf::Color(220, 20, 60));
-							for (auto& i : toolSprites) {
-								toolCanvas.draw(i);
-							}
-							visibleTools = true;
+							map->endEditingMap(mapName);
 						}
-						toolWindow.setTexture(toolCanvas.getTexture());
-			
+						_data->machine.RemoveState();
+				}
+				break;
+			case sf::Event::TextEntered:
+				if (event.text.unicode != 27) {
+					mapName += event.text.unicode;
+					inputName.setString(mapName);
+				}
+			break;
+			}
+		}
+		else {
+			switch (event.type)
+			{
+			case sf::Event::Closed:
+				_data->window.close();
+				break;
+			case sf::Event::MouseWheelMoved:
+				this->scaleView(event.mouseWheel.delta);
+				break;
+			case sf::Event::KeyPressed:
+				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
+					_data->window.setView(sf::View(sf::FloatRect(0, 0, windowWidth, windowHeight)));
+					endMap = true;
+					explanationText.setString("Map name:");
+				}
+				break;
+			case sf::Event::MouseMoved:
+				if (sf::Mouse::isButtonPressed(sf::Mouse::Right)) {
+					this->scrollView(sf::Vector2i(_data->input.getMousePosition(_data->window).x - mouseX, _data->input.getMousePosition(_data->window).y - mouseY));
+				}
+				break;
+			case sf::Event::MouseButtonPressed:
+				if (_data->input.isSpriteClicked(arrowButton, sf::Mouse::Left, _data->window, view)) {
+					if (visibleTools) {
+						toolCanvas.clear(sf::Color::Transparent);
+						visibleTools = false;
 					}
-				
-			break;
-		
-			
-				
+					else {
+						toolCanvas.clear(sf::Color(220, 20, 60));
+						for (auto& i : toolSprites) {
+							toolCanvas.draw(i);
+						}
+						visibleTools = true;
+					}
+					toolWindow.setTexture(toolCanvas.getTexture());
 
-			
-		case sf::Event::TextEntered:
-			mapHeightInput += event.text.unicode;
-			input.setString(mapHeightInput);
-			break;
-		
-			
+				}
+
+				break;
+			}
 		}
 
 		if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
-		if (_data->input.isSpriteClicked(toolWindow, sf::Mouse::Left, _data->window, view) && visibleTools) {
-			for (int i = 0; i < toolSprites.size(); i++) {
-				if (_data->input.isSpriteClicked(toolSprites[i], sf::Mouse::Left, _data->window, toolWindow, view)) {
-					id = i;
+			if (_data->input.isSpriteClicked(toolWindow, sf::Mouse::Left, _data->window, view) && visibleTools) {
+				for (int i = 0; i < toolSprites.size(); i++) {
+					if (_data->input.isSpriteClicked(toolSprites[i], sf::Mouse::Left, _data->window, toolWindow, view)) {
+						id = i;
+					}
 				}
 			}
-
-		}
-		else {
-			map->placeObject(mouseX * view.getSize().x / windowWidth + (view.getCenter().x - view.getSize().x / 2), mouseY * view.getSize().y / windowHeight + (view.getCenter().y - view.getSize().y / 2), id);
-		}
+			else {
+				map->placeObject(mouseX * view.getSize().x / windowWidth + (view.getCenter().x - view.getSize().x / 2), mouseY * view.getSize().y / windowHeight + (view.getCenter().y - view.getSize().y / 2), id);
 			}
+		}
 		
-		
-
 	}
 }
 
@@ -142,9 +211,6 @@ void MapEditorState::Update(float dt) {
 	if (!inputField) {
 		map->canvasUpdate(view.getCenter().x);
 		toolWindowUpdate();
-
-		//std::cout << view.getCenter().x << std::endl;
-
 	}
 	
 }
@@ -152,7 +218,13 @@ void MapEditorState::Update(float dt) {
 void MapEditorState::Draw(float dt) {
 	_data->window.clear();
 	if (inputField) {
-		_data->window.draw(input);
+		_data->window.draw(inputWidth);
+		_data->window.draw(inputHeight);
+		_data->window.draw(explanationText);
+	}
+	else if (endMap) {
+		_data->window.draw(inputName);
+		_data->window.draw(explanationText);
 	}
 	else {
 		map->drawEditMap();

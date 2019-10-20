@@ -80,7 +80,6 @@ void MainMenuState::HandleInput() {
 }
 
 void MainMenuState::Update(float dt) {
-	_data->window.setView(menuView);
 }
 
 void MainMenuState::Draw(float dt) {
@@ -94,5 +93,6 @@ void MainMenuState::Pause() {
 }
 
 void MainMenuState::Resume() {
+	_data->window.setView(menuView);
 	menuMusic.play();
 }

@@ -20,9 +20,10 @@ private:
 	
 	int mouseX, mouseY;
 
-	sf::Text input;
-	std::string mapWidthInput="", mapHeightInput="";
-	int textNum = 0;
+	sf::Text inputWidth, inputHeight, explanationText, inputName;
+	std::string inputWidthText, inputHeightText, mapName="";
+	int mapWidthInput=1600, mapHeightInput=800;
+	int inputSizeState = 0;
 	TileMap* map;
 	GameDataRef _data;
 	sf::Sprite _background;
@@ -36,7 +37,7 @@ private:
 	void scaleView(int deltaScale);
 	void scrollView(sf::Vector2i deltaScroll);
 
-	bool inputField;
+	bool inputField, endMap;
 
 	void toolWindowUpdate();
 

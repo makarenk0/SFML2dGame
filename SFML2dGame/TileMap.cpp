@@ -26,7 +26,7 @@ TileMap::TileMap(GameDataRef data, int width, int height, bool editMode) : _data
 }
 
 void TileMap::initMap() {
-	std::ifstream file("maps/customMap.txt");
+	std::ifstream file("maps/secondMap.txt");
 	std::string line;
 	std::string value = "";
 	int x, y, tileId, objectId, blockNum = 0;
