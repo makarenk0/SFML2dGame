@@ -14,6 +14,7 @@ public:
 
 	void loadSound(std::string name, std::string fileName);
 	sf::SoundBuffer& getSound(std::string name);
+	void removeSoundBuffer(const std::string& name);
 
 private:
 	std::map<std::string, sf::Texture> _textures;

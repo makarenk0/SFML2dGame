@@ -1,9 +1,9 @@
 #pragma once
 
-#define windowWidth 1600
-#define windowHeight 800
-#define FPS 60
-#define tileSize 32
+const int windowWidth = 1600;
+const int windowHeight = 800;
+const int FPS = 60;
+const int tileSize = 32;
 
 #define SPLASH_STATE_TIME 1.0f
 #define SPLASH_STATE_BACKGROUND_FILEPATH "assets/textures/SPLASH_STATE_BACKGROUND.png"

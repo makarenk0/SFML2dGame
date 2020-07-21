@@ -18,7 +18,7 @@ private:
 	sf::Clock clock;
 	sf::FloatRect cameraBounds;
 	int _visibleWidth, _visibleHeight;
-	int counter;
+	int counter = 0;
 	std::string gameOverString = "Game Over    ";
 	std::string gameOverStringBuf="";
 	sf::Text gameOverText;
@@ -29,7 +29,7 @@ private:
 	void animatePlayer();
 	int animationIteratorX = 0, animationIteratorY = 0;
 	void updateCamera(float dt);
-	sf::Clock* gameOverClock;
+	sf::Clock* gameOverClock = nullptr;
 	void checkTriggers();
 	std::list<TriggerReact> triggersBuffer;
 	int playerHealth;

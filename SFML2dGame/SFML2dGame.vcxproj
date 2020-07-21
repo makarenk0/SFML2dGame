@@ -87,12 +87,13 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>D:\downloads\SFML-2.5.1\include;</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>SFML_DYNAMIC;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\downloads\SFML-2.5.1\include;</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>SFML_DYNAMIC;_MBCS;_SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
-      <AdditionalLibraryDirectories>D:\downloads\SFML-2.5.1\lib</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\downloads\SFML-2.5.1\lib</AdditionalLibraryDirectories>
       <AdditionalDependencies>sfml-graphics-d.lib;sfml-window-d.lib;sfml-system-d.lib;sfml-audio-d.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -141,6 +142,7 @@
     <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="MainMenuState.cpp" />
     <ClCompile Include="MapEditorState.cpp" />
+    <ClCompile Include="MenuItem.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Source.cpp" />
     <ClCompile Include="SplashState.cpp" />
@@ -158,6 +160,7 @@
     <ClInclude Include="InputManager.h" />
     <ClInclude Include="MainMenuState.h" />
     <ClInclude Include="MapEditorState.h" />
+    <ClInclude Include="MenuItem.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="SplashState.h" />
     <ClInclude Include="State.h" />

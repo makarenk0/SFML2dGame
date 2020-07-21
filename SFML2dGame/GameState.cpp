@@ -1,7 +1,7 @@
 #include "GameState.h"
 
 
-GameState::GameState(GameDataRef data) : _data(data)
+GameState::GameState(GameDataRef data, std::string mapName, bool campaignMode) : _data(data), _mapName(mapName), _campaignMode(campaignMode)
 {
 	
 }
@@ -9,7 +9,7 @@ GameState::GameState(GameDataRef data) : _data(data)
 void GameState::Init() {
 	_data->asset.loadTexture("Player Texture", PLAYER_TEXTURE_FILEPATH);
 	int visibleWidth= windowWidth/3, visibleHeight = windowHeight/3;
-	map = new TileMap(_data, visibleWidth, visibleHeight);
+	map = new TileMap(_data, visibleWidth, visibleHeight, _mapName, _campaignMode);
 	player = new Player("Player Texture", map, _data, visibleWidth, visibleHeight);
 	
 }

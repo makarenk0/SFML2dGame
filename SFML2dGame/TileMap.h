@@ -12,7 +12,7 @@
 class TileMap
 {
 public:
-	TileMap(GameDataRef data, int visibleWidth, int visibleHeight);
+	TileMap(GameDataRef data, int visibleWidth, int visibleHeight, std::string mapName, bool campaignMode);
 	TileMap(GameDataRef data, int width, int height, bool editMode);
 	void draw();
 	void drawEditMap();
@@ -23,15 +23,18 @@ public:
 	int getDamageFromObject();
 	void endEditingMap(std::string filename);
 	int bottomSideDistance, rightSideDistance, leftSideDistance, mapWidth, mapHeight;
-	void backgroundUpdate(float dt, int dx, int x);
+	void mapAnimationsUpdate(float dt, int dx, int x);
 	sf::Sprite *mapSpritePtr = &mapSprite, *backgroundPtr = &background;
 	std::list<std::tuple<int, int , sf::IntRect>> triggers;
+	int playerStartPosX = -1, playerStartPosY = -1;
+	int portalX = -1, portalY = -1;
+	bool playerWin = false;
 private:
 	int damageFromObject = 0;
 	bool _editMode;
 	int editMapWidth, editMapHeight;
 	GameDataRef _data;
-	void initMap();
+	void initMap(std::string mapName, bool campaignMode);
 	void newMap();
 	std::vector<std::map<std::string, sf::VertexArray>> map;
 	std::deque<std::map<std::string, sf::VertexArray>*> mapObserve;

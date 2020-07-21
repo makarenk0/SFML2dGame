@@ -9,6 +9,7 @@ void TriggerReact::update() {
 		_map->changeTile(std::get<2>(_trigger).left, std::get<2>(_trigger).top, std::get<0>(_trigger) + _counter * objTextureWidth, false);
 		triggerLife->restart();
 		if (_counter == std::get<1>(_trigger)-1) {
+			delete triggerLife;
 			_remove = true;
 		}
 		_counter++;

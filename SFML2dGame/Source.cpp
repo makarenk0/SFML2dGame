@@ -5,8 +5,6 @@
 
 int main(){
 	Game game(windowWidth, windowHeight, "Game");
-
-	
 	return 0;
 }
 

@@ -1,8 +1,12 @@
 #pragma once
 #include "State.h"
 #include "Game.h"
+#include "MenuItem.h"
 #include "DEFINITIONS.h"
 #include <iostream>
+#include <list>
+#include <filesystem>
+namespace fs = std::filesystem;
 
 class MainMenuState : public State
 {
@@ -18,16 +22,20 @@ public:
 	void Resume();
 
 private:
+	int rangeBetweenButtons;
 	GameDataRef _data;
 
 	sf::Sound menuMusic;
 	sf::Sprite _background;
-	sf::Text _singlePlayerText;
-	sf::Text _mapEditorText;
 
 	sf::Sprite menuSprite;
 	sf::RenderTexture menuCanvas;
 	sf::View menuView;
+	int _state;
+	void menuCanvasRedraw();
+	void menuNavigate();
 
+	std::vector<MenuItem> currentMenuList;
+	std::map<std::string, std::vector<MenuItem>> menuListData;
 
 };

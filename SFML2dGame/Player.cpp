@@ -103,7 +103,7 @@ void Player::checkGameOver() {
 }
 
 void Player::checkVictory() {
-	if (x + w > _map->mapWidth - tileSize/2) {
+	if (_map->playerWin) {
 		victory = true;
 		victoryText.setPosition(sf::Vector2f(playerCamera.getCenter().x - 100, playerCamera.getCenter().y - 50));
 		victoryText.setScale(playerCamera.getSize().x / windowWidth, playerCamera.getSize().y / windowHeight);
@@ -137,10 +137,10 @@ void Player::updateCamera(float dt) {
 		_map->mapSpritePtr->setTextureRect(sf::IntRect(x - _visibleWidth / 2, _map->mapSpritePtr->getTextureRect().top, _visibleWidth, _visibleHeight));
 		_map->mapSpritePtr->setPosition(x - _visibleWidth / 2, _map->mapSpritePtr->getPosition().y);
 		_map->backgroundPtr->setPosition(x - _visibleWidth / 2, 0);
-		_map->backgroundUpdate(dt, dx, x);
+		_map->mapAnimationsUpdate(dt, dx, x);
 	}
 	else {
-		_map->backgroundUpdate(dt, 0, x);
+		_map->mapAnimationsUpdate(dt, 0, x);
 	}
 	if (cameraBounds.contains(_visibleWidth/2, y)) {
 		playerCamera.setCenter(playerCamera.getCenter().x, y);

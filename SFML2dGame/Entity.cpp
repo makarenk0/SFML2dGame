@@ -5,13 +5,15 @@
 Entity::Entity(std::string textureName, TileMap* map, GameDataRef data, int entityHealth) : _map(map), _data(data), _entityHealth(entityHealth)
 {
 
-	x = 594;
-	y = 201;
+	x = map->playerStartPosX;
+	y = map->playerStartPosY;
 	w = PLAYER_TEXTURE_WIDTH;
 	h = PLAYER_TEXTURE_HEIGHT;
 
 	
 	entity.initEntity(x, y,  w, h);
+
+
 	entity._entity.setTexture(_data->asset.getTexture(textureName));
 }
 
@@ -86,11 +88,6 @@ void Entity::interactMap(float dt) {   //rigth and left sides
 			}
 		}
 	}
-
-
-	
-	
-	
 
 	
 }

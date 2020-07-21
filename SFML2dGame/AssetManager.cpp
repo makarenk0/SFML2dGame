@@ -38,3 +38,9 @@ sf::SoundBuffer& AssetManager::getSound(std::string name)
 {
 	return this->_sounds.at(name);
 }
+
+void AssetManager::removeSoundBuffer(const std::string& name) {
+	if (this->_sounds.find(name) != this->_sounds.end()){
+		_sounds.erase(name);
+	}
+}

@@ -2,7 +2,7 @@
 
 
 
-TileMap::TileMap(GameDataRef data, int visibleWidth, int visibleHeight) : _data(data)
+TileMap::TileMap(GameDataRef data, int visibleWidth, int visibleHeight, std::string mapName, bool campaignMode) : _data(data)
 {
 	_visibleWidth = visibleWidth;
 	_visibleHeight = visibleHeight;
@@ -10,9 +10,7 @@ TileMap::TileMap(GameDataRef data, int visibleWidth, int visibleHeight) : _data(
 	mapSprite.setPosition(0, 0);
 	initTilesHitboxes();
 	srand(time(0));
-
-
-	initMap();
+	initMap(mapName, campaignMode);
 }
 
 TileMap::TileMap(GameDataRef data, int width, int height, bool editMode) : _data(data), _editMode(editMode)
@@ -21,17 +19,32 @@ TileMap::TileMap(GameDataRef data, int width, int height, bool editMode) : _data
 	editMapHeight = height;
 	mapSprite.setPosition(0, 0);
 	idData.resize(editMapHeight / tileSize);
-//	initMap();
+//	initMap();  // add editing created maps(for future);
 	newMap();
-}
+} 
 
-void TileMap::initMap() {
-	std::ifstream file("maps/secondMap.txt");
+void TileMap::initMap(std::string mapName, bool campaignMode) {
+	std::ifstream file;
+	if (campaignMode) {
+		file.open("maps/campaign/" + mapName + ".txt");
+	}
+	else {
+		file.open("maps/custom/" + mapName + ".txt");
+	}
+	
 	std::string line;
 	std::string value = "";
 	int x, y, tileId, objectId, blockNum = 0;
 	bool solid;
 
+	//player start position
+	std::getline(file, line);
+	line = line.substr(7, line.length());
+	readValue(line, value);
+	this->playerStartPosX = std::stoi(value);
+	readValue(line, value);
+	this->playerStartPosY = std::stoi(value);
+	value = "";
 	//init canvas that fits tilemap
 	std::getline(file, line);
 	line = line.substr(8, line.length());
@@ -56,6 +69,10 @@ void TileMap::initMap() {
 	background2.setPosition(0, 0);
 	background2.setScale(1, tilesInCol * tileSize / 2 / _data->asset.getTexture("Background2").getSize().y);
 	backgroundCanvas.display();
+
+
+	
+	
 	//-------------------------
 	std::map<std::string, sf::VertexArray> block;
 	initMapBlocks(block);
@@ -145,7 +162,7 @@ void TileMap::draw() {
 	_data->window.draw(mapSprite);
 }
 
-void TileMap::backgroundUpdate(float dt, int dx, int x) {
+void TileMap::mapAnimationsUpdate(float dt, int dx, int x) {
 	backgroundCanvas.clear();
 	backgroundCanvas.draw(background2);
 	backgroundCanvas.draw(background1);
@@ -158,7 +175,7 @@ void TileMap::backgroundUpdate(float dt, int dx, int x) {
 		clock.restart();
 	}
 		for (auto& i : clouds) {
-			i.move(-CLOUDS_SPEED - dt * dx, 0.f);
+			i.move(-CLOUDS_SPEED - dt*1.0 * dx, 0.f);
 			backgroundCanvas.draw(i);
 		}
 		if (!clouds.empty()&&clouds.front().getPosition().x + 166 < 0) {
@@ -186,7 +203,7 @@ void TileMap::canvasUpdate(int x) {  //for rendering only part of tilemap
 
 	if (x % windowWidth < windowWidth / 2&& x > windowWidth) {
 		if (currentBlock.x == 0) {
-			mapObserve.push_front(&map.at(currentBlock.y - 1));
+			mapObserve.push_front(&map.at(currentBlock.y - 1.0));
 			mapObserve.pop_back();
 			currentBlock.x = 1;
 			reDrawCanvas();
@@ -195,7 +212,7 @@ void TileMap::canvasUpdate(int x) {  //for rendering only part of tilemap
 	}
 	else if (x % windowWidth > windowWidth / 2 && x < canvas.getSize().x - windowWidth) {
 		if (currentBlock.x == 1) {
-			mapObserve.push_back(&map.at(currentBlock.y + 1));
+			mapObserve.push_back(&map.at(currentBlock.y + 1.0));
 			mapObserve.pop_front();
 			currentBlock.x = 0;
 			reDrawCanvas();
@@ -218,15 +235,13 @@ void TileMap::newMap() {
 
 		for (int y = 0; y < tilesInCol; y++) {
 			for (int x = 0; x < tilesInRow; x++) {
-				sf::Vertex* vertexTile = &block["blockTiles"][4*(y * tilesInRow + x)];
+				sf::Vertex* vertexTile = &block["blockTiles"][4.0*(1.0*y * tilesInRow + x)];
 				setTilePosition(vertexTile, x + i*tilesInRow, y);
 				setTileTextureCords(vertexTile, 0, 0);
 
-				sf::Vertex* vertexObject = &block["blockObjects"][4 * (y * tilesInRow + x)];
+				sf::Vertex* vertexObject = &block["blockObjects"][4.0 * (1.0*y * tilesInRow + x)];
 				setTilePosition(vertexObject, x + i * tilesInRow, y);
 				setTileTextureCords(vertexObject, 0, 0);
-
-				//solidData[y].push_back(false);
 			}
 		}
 		map.push_back(block);
@@ -250,7 +265,6 @@ void TileMap::placeObject(int x, int y, int id) {
 	}
 	else {
 		id = id%((tileTextureWidth / tileSize) * (tileTextureHeight / tileSize));
-		
 		switch (id) {
 		case 0:
 			changeTile(x, y, 0, false);
@@ -310,7 +324,24 @@ void TileMap::placeObject(int x, int y, int id) {
 		case 16:
 			changeTile(x, y, 25, false);
 			break;
-		}
+		case 17:
+			if (playerStartPosX != -1) {
+				changeTile(playerStartPosX, playerStartPosY, 0, false);
+			}
+			changeTile(x, y, 26, false);
+			playerStartPosX = x;
+			playerStartPosY = y;
+			
+			break;
+		case 18:
+			if (portalX != -1) {
+				changeTile(portalX, portalY, 0, false);
+			}
+			changeTile(x, y, 27, false);
+			portalX = x;
+			portalY = y;
+			break;
+	    }
 
 	}
 	
@@ -320,15 +351,13 @@ void TileMap::changeTile(int x, int y, int id, bool blockTiles) {
 	
 	if (x > 0 && x < canvas.getSize().x && y>0 && y < canvas.getSize().y) {
 		int blockNum = x / windowWidth;
-	//	solidData[y / tileSize][x / tileSize] = solid;
-	//	idData[y / tileSize][x / tileSize] = id;
 		
 		if (blockTiles) {
-			sf::Vertex* vertexTile = &map[blockNum]["blockTiles"][4 * (((y / tileSize) * tilesInRow) + ((x % windowWidth) / tileSize))];
+			sf::Vertex* vertexTile = &map[blockNum]["blockTiles"][4.0 * (((int)(y / tileSize) * tilesInRow) + ((x % windowWidth) / tileSize))];
 			setTileTextureCords(vertexTile, id % (tileTextureWidth / tileSize), id / (tileTextureWidth / tileSize));	
 		}
 		else {
-			sf::Vertex* vertexObject = &map[blockNum]["blockObjects"][4 * (((y / tileSize) * tilesInRow) + ((x % windowWidth) / tileSize))];
+			sf::Vertex* vertexObject = &map[blockNum]["blockObjects"][4.0 * (((int)(y / tileSize) * tilesInRow) + ((x % windowWidth) / tileSize))];
 			setTileTextureCords(vertexObject, id % (objectTextureWidth / tileSize), id / (objectTextureWidth / tileSize));
 		}
 	
@@ -338,9 +367,11 @@ void TileMap::changeTile(int x, int y, int id, bool blockTiles) {
 
 void TileMap::endEditingMap(std::string filename) {
 	std::ofstream customMap;
-	customMap.open("maps/" + filename+".txt");
+	customMap.open("maps/custom/" + filename+".txt");
+	customMap << "player1(" << playerStartPosX << "," << playerStartPosY << ",)" << std::endl;
+	changeTile(playerStartPosX, playerStartPosY, 0, false);
 	customMap << "mapBound(" << canvas.getSize().x << "," << canvas.getSize().y << ",)" << std::endl;
-
+	
 	int blockNum = 0;
 	for (auto& i : map) {
 		for (int j = 0; j < i["blockTiles"].getVertexCount(); j += 4) {
@@ -439,9 +470,10 @@ bool TileMap::checkCollisionOfPoint(int x, int y) {
 				return true;
 			}
 		}
-		else if ((id > 2&& id<18)||id==24) {
-			
-
+		else if (id == 28) {
+			playerWin = true;
+		}
+		else{
 			return false;
 		}
 		
@@ -457,8 +489,8 @@ int TileMap::getDamageFromObject() {
 void TileMap::initMapBlocks(std::map<std::string, sf::VertexArray> &block) {
 	block["blockTiles"] = sf::VertexArray();
 	block["blockObjects"] = sf::VertexArray();
-	block["blockTiles"].resize(4 * tilesInRow * tilesInCol);
-	block["blockObjects"].resize(4 * tilesInRow * tilesInCol);
+	block["blockTiles"].resize(4.0 * tilesInRow * tilesInCol);
+	block["blockObjects"].resize(4.0 * tilesInRow * tilesInCol);
 	block["blockTiles"].setPrimitiveType(sf::Quads);
 	block["blockObjects"].setPrimitiveType(sf::Quads);
 }
@@ -537,14 +569,14 @@ bool TileMap::pointInPolygon(int x, int y, int polygonId) {
 	int count = 0, countParallel = 0;
 	sf::ConvexShape* hitboxPtr = &tilesHitboxes[polygonId];
 	
-	int x1 = x % tileSize;
-	int y1 = y % tileSize;
+	double x1 = x % tileSize;
+	double y1 = y % tileSize;
 	
-	int x2 = tileSize;
-	int y2 = y1;
-	int x3, y3, x4, y4;
+	double x2 = tileSize;
+	double y2 = y1;
+	double x3, y3, x4, y4;
 
-	for (int i = 0; i < hitboxPtr->getPointCount(); i++) {
+	for (size_t i = 0; i < hitboxPtr->getPointCount(); i++) {
 
 		x3 = hitboxPtr->getPoint(i).x;
 		y3 = hitboxPtr->getPoint(i).y;
@@ -574,8 +606,8 @@ bool TileMap::pointInPolygon(int x, int y, int polygonId) {
 
 		}
 		else {
-			numerator_a = (x4 - x2) * (y4 - y3) - (x4 - x3) * (y4 - y2);
-			numerator_b = (x1 - x2) * (y4 - y2) - (x4 - x2) * (y1 - y2);
+			numerator_a = 1.0*(x4 - x2) * (y4 - y3) - (x4 - x3) * (y4 - y2);
+			numerator_b = 1.0*(x1 - x2) * (y4 - y2) - (x4 - x2) * (y1 - y2);
 			Ua = numerator_a / denominator;
 			Ub = numerator_b / denominator;
 			if (Ua >= 0 && Ua <= 1 && Ub >= 0 && Ub <= 1) {
@@ -597,12 +629,8 @@ bool TileMap::pointInPolygon(int x, int y, int polygonId) {
 
 void TileMap::computeOffsets(int x, int y, int polygonId) {
 	sf::ConvexShape* hitboxPtr = &tilesHitboxes[polygonId];
-	//std::vector<int> yPoint;
 
-
-	
-
-	for (int i = 0; i < hitboxPtr->getPointCount()-1; i += 1) {
+	for (size_t i = 0; i < hitboxPtr->getPointCount()-1; i += 1) {
 		if ((hitboxPtr->getPoint(i).x <= x && hitboxPtr->getPoint(i + 1).x >= x) || (hitboxPtr->getPoint(i).x >= x && hitboxPtr->getPoint(i + 1).x <= x)) {
 			if (hitboxPtr->getPoint(i).y <= y) {
 				bottomSideDistance = hitboxPtr->getPoint(i).y;

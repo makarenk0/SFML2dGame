@@ -9,7 +9,7 @@
 class GameState : public State
 {
 public:
-	GameState(GameDataRef data);
+	GameState(GameDataRef data, std::string mapName, bool campaignMode);
 
 	void Init();
 	void HandleInput();
@@ -17,11 +17,13 @@ public:
 	void Draw(float dt);
 
 private:
-	int dir, speed = 0;
-	TileMap* map;
-	Player* player;
+	bool _campaignMode;
+	std::string _mapName;
+	int dir = 0, speed = 0;
+	TileMap* map = nullptr;
+	Player* player = nullptr;
 	GameDataRef _data;
 	sf::Sprite _background;
-	bool finishState;
+	bool finishState = false;
 };
 

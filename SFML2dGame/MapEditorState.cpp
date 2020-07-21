@@ -55,7 +55,7 @@ void MapEditorState::initToolSprites() {
 
 	int range = 20;
 	int tilesInARow = 5;
-	for (int i = 0; i < (_data->asset.getTexture("Tool tiles").getSize().x / tileSize * _data->asset.getTexture("Tool tiles").getSize().y / tileSize) ; i++) {
+	for (int i = 0; i < (_data->asset.getTexture("Tool tiles").getSize().x / tileSize * _data->asset.getTexture("Tool tiles").getSize().y / tileSize); i++) {
 		sf::Sprite sprite;
 		sprite.setTexture(_data->asset.getTexture("Tool tiles"));
 		sprite.setTextureRect(sf::IntRect(i*tileSize%_data->asset.getTexture("Tool tiles").getSize().x, (i * tileSize / _data->asset.getTexture("Tool tiles").getSize().x)*tileSize, tileSize, tileSize));
@@ -193,6 +193,7 @@ void MapEditorState::HandleInput() {
 			if (_data->input.isSpriteClicked(toolWindow, sf::Mouse::Left, _data->window, view) && visibleTools) {
 				for (int i = 0; i < toolSprites.size(); i++) {
 					if (_data->input.isSpriteClicked(toolSprites[i], sf::Mouse::Left, _data->window, toolWindow, view)) {
+						
 						id = i;
 					}
 				}
