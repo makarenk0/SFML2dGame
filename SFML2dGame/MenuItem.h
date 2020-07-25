@@ -14,11 +14,11 @@ public:
 	void setPosition(const int& x, const int& y);
 	void setVisible();
 	void setTransparent();
+	void setTransform(const int& dx, const int& dy);
 	sf::IntRect getRect();
 	const std::string getText();
 private:
 	virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
-	bool _mouseIn = false;
 	sf::Text _text;
 	sf::Color _onChangeColor;
 	sf::RectangleShape _rectangle;

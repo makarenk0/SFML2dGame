@@ -1,4 +1,5 @@
 #include "MenuItem.h"
+#include <iostream>
 
 MenuItem::MenuItem()
 {
@@ -12,7 +13,7 @@ MenuItem::MenuItem(const std::string& text, const sf::Font& font, const int& fon
 	_text.setCharacterSize(fontSize);
 	_text.setFillColor(color);
 
-	_rectangle.setSize(sf::Vector2f(_text.getGlobalBounds().width + 20, _text.getGlobalBounds().height + 20));
+	_rectangle.setSize(sf::Vector2f(_text.getGlobalBounds().width + 20, fontSize + 20));
 	_rectangle.setFillColor(sf::Color(0, 0, 0, 0));
 }
 
@@ -49,6 +50,11 @@ void MenuItem::setVisible()
 void MenuItem::setTransparent()
 {
 	_rectangle.setFillColor(sf::Color(0, 0, 0, 0));
+}
+
+void MenuItem::setTransform(const int& dx, const int& dy)
+{
+	setPosition(_rectangle.getGlobalBounds().left + 10 + dx, _rectangle.getGlobalBounds().top - (float)dy);
 }
 
 sf::IntRect MenuItem::getRect()

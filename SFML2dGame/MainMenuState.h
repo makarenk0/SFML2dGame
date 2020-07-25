@@ -30,10 +30,19 @@ private:
 
 	sf::Sprite menuSprite;
 	sf::RenderTexture menuCanvas;
+
+	int currentMenuListLength = 0;
+	int currentScrollState = 0;
+	const int scrollSpeed = 25;
+	
+
 	sf::View menuView;
 	int _state;
 	void menuCanvasRedraw();
 	void menuNavigate();
+	void computeMenuListLength();
+	void scrollMenuListItems(const int& wheelDelta);
+	void loadMapsLists();
 
 	std::vector<MenuItem> currentMenuList;
 	std::map<std::string, std::vector<MenuItem>> menuListData;

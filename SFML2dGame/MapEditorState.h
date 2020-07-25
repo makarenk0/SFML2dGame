@@ -4,6 +4,7 @@
 #include "TileMap.h"
 #include "DEFINITIONS.h"
 #include <iostream>
+#include "TileMapEditor.h"
 
 class MapEditorState : public State
 {
@@ -24,7 +25,7 @@ private:
 	std::string inputWidthText, inputHeightText, mapName="";
 	int mapWidthInput=1600, mapHeightInput=800;
 	int inputSizeState = 0;
-	TileMap* map;
+	TileMapEditor* map;
 	GameDataRef _data;
 	sf::Sprite _background;
 

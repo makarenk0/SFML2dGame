@@ -10,183 +10,220 @@ MainMenuState::MainMenuState(GameDataRef data) : _data(data)
 }
 
 void MainMenuState::Init() {
-	
-	_data->asset.loadTexture("MainMenu Background", MAINMENU_STATE_BACKGROUND_FILEPATH);
-	_background.setTexture(_data->asset.getTexture("MainMenu Background"));
+    
+    _data->asset.loadTexture("MainMenu Background", MAINMENU_STATE_BACKGROUND_FILEPATH);
+    _background.setTexture(_data->asset.getTexture("MainMenu Background"));
 
-	_data->asset.loadFont("MainMenu Font", MAINMENU_STATE_FONT_FILEPATH);
-	_data->asset.loadTexture("Tiles Texture", TILES_TEXTURE_FILEPATH);
-	_data->asset.loadTexture("Objects Texture", OBJECTS_TEXTURE_FILEPATH);
+    _data->asset.loadFont("MainMenu Font", MAINMENU_STATE_FONT_FILEPATH);
+    _data->asset.loadTexture("Tiles Texture", TILES_TEXTURE_FILEPATH);
+    _data->asset.loadTexture("Objects Texture", OBJECTS_TEXTURE_FILEPATH);
 
-	_data->asset.loadTexture("Background1", BACKGROUND1_TEXTURE_FILEPATH);
-	_data->asset.loadTexture("Background2", BACKGROUND2_TEXTURE_FILEPATH);
-	_data->asset.loadTexture("Clouds", CLOUDS_TEXTURE_FILEPATH);
+    _data->asset.loadTexture("Background1", BACKGROUND1_TEXTURE_FILEPATH);
+    _data->asset.loadTexture("Background2", BACKGROUND2_TEXTURE_FILEPATH);
+    _data->asset.loadTexture("Clouds", CLOUDS_TEXTURE_FILEPATH);
 
-	_data->asset.loadTexture("InfoBar", INFOBAR_TEXTURE_FILEPATH);
-	_data->asset.loadTexture("Heart", HEART_TEXTURE_FILEPATH);
+    _data->asset.loadTexture("InfoBar", INFOBAR_TEXTURE_FILEPATH);
+    _data->asset.loadTexture("Heart", HEART_TEXTURE_FILEPATH);
 
-	_data->asset.loadSound("Hit player", HIT_PLAYER_SOUND_FILEPATH);
-	_data->asset.loadSound("Menu Music", MENU_MUSIC_FILEPATH);
-	_data->asset.loadSound("Gameover Sound", GAMEOVER_MUSIC_FILEPATH);
-	_data->asset.loadSound("Victory Sound", VICTORY_MUSIC_FILEPATH);
-	
-	
-	
+    _data->asset.loadSound("Hit player", HIT_PLAYER_SOUND_FILEPATH);
+    _data->asset.loadSound("Menu Music", MENU_MUSIC_FILEPATH);
+    _data->asset.loadSound("Gameover Sound", GAMEOVER_MUSIC_FILEPATH);
+    _data->asset.loadSound("Victory Sound", VICTORY_MUSIC_FILEPATH);
+    
+    
+    
 
-	#pragma region InitMenuList
-	rangeBetweenButtons = 30;
+    #pragma region InitMenuList
+    rangeBetweenButtons = 30;
 
-	menuListData.insert({ "main_selection", std::vector<MenuItem>()});
-	
-	menuListData["main_selection"].push_back(MenuItem("Singleplayer", _data->asset.getFont("MainMenu Font"), 100, sf::Color(255, 255, 255), sf::Color(0, 0, 255)));
-	menuListData["main_selection"].back().setPosition(windowWidth / 2 - menuListData["main_selection"].back().getRect().width / 2, windowHeight / 3);
-	
-	menuListData["main_selection"].push_back(MenuItem("Map editor", _data->asset.getFont("MainMenu Font"), 100, sf::Color(255, 255, 255), sf::Color(0, 0, 255)));
-	menuListData["main_selection"].back().setPosition(windowWidth / 2 - menuListData["main_selection"].back().getRect().width / 2, windowHeight / 3 + menuListData["main_selection"].front().getRect().height + rangeBetweenButtons);
-
-
-	menuListData.insert({ "singleplayer", std::vector<MenuItem>() });
-	
-	menuListData["singleplayer"].push_back(MenuItem("Campaign", _data->asset.getFont("MainMenu Font"), 100, sf::Color(255, 255, 255), sf::Color(0, 0, 255)));
-	menuListData["singleplayer"].back().setPosition(windowWidth / 2 - menuListData["singleplayer"].back().getRect().width / 2, windowHeight / 3);
-	
-	menuListData["singleplayer"].push_back(MenuItem("Custom map", _data->asset.getFont("MainMenu Font"), 100, sf::Color(255, 255, 255), sf::Color(0, 0, 255)));
-	menuListData["singleplayer"].back().setPosition(windowWidth / 2 - menuListData["singleplayer"].back().getRect().width / 2, windowHeight / 3 + menuListData["main_selection"].front().getRect().height + rangeBetweenButtons);
-
-	std::string type = "campaign";
-	for (int i = 0; i < 2; i++) {
-		menuListData.insert({ type, std::vector<MenuItem>() });
-		int j = 0;
-		for (const auto& entry : fs::directory_iterator("maps/" + type + "/")) {
-			std::string fullName = entry.path().filename().string();
-			menuListData[type].push_back(MenuItem(fullName.substr(0, fullName.length() - 4), _data->asset.getFont("MainMenu Font"), 100, sf::Color(255, 255, 255), sf::Color(0, 0, 255), 0, 0));
-			menuListData[type].back().setPosition(windowWidth / 2 - menuListData[type].back().getRect().width / 2, menuListData[type].back().getRect().height + 2 * j * menuListData[type].back().getRect().height);
-			++j;
-		}
-		type = "custom";
-	}
-	
-	currentMenuList = menuListData["main_selection"];
-	#pragma endregion
+    menuListData.insert({ "main_selection", std::vector<MenuItem>()});
+    
+    menuListData["main_selection"].push_back(MenuItem("Singleplayer", _data->asset.getFont("MainMenu Font"), 100, sf::Color(255, 255, 255), sf::Color(0, 0, 255)));
+    menuListData["main_selection"].back().setPosition(windowWidth / 2 - menuListData["main_selection"].back().getRect().width / 2, windowHeight / 3);
+    
+    menuListData["main_selection"].push_back(MenuItem("Map editor", _data->asset.getFont("MainMenu Font"), 100, sf::Color(255, 255, 255), sf::Color(0, 0, 255)));
+    menuListData["main_selection"].back().setPosition(windowWidth / 2 - menuListData["main_selection"].back().getRect().width / 2, windowHeight / 3 + menuListData["main_selection"].front().getRect().height + rangeBetweenButtons);
 
 
-	menuCanvas.create(windowWidth, windowHeight);
+    menuListData.insert({ "singleplayer", std::vector<MenuItem>() });
+    
+    menuListData["singleplayer"].push_back(MenuItem("Campaign", _data->asset.getFont("MainMenu Font"), 100, sf::Color(255, 255, 255), sf::Color(0, 0, 255)));
+    menuListData["singleplayer"].back().setPosition(windowWidth / 2 - menuListData["singleplayer"].back().getRect().width / 2, windowHeight / 3);
+    
+    menuListData["singleplayer"].push_back(MenuItem("Custom map", _data->asset.getFont("MainMenu Font"), 100, sf::Color(255, 255, 255), sf::Color(0, 0, 255)));
+    menuListData["singleplayer"].back().setPosition(windowWidth / 2 - menuListData["singleplayer"].back().getRect().width / 2, windowHeight / 3 + menuListData["main_selection"].front().getRect().height + rangeBetweenButtons);
+
+    loadMapsLists();
+    currentMenuList = menuListData["main_selection"];
+    #pragma endregion
+
+
+    menuCanvas.create(windowWidth, windowHeight);
     menuSprite.setPosition(0, 0);
 
-	menuView.reset(sf::FloatRect(0, 0, windowWidth, windowHeight));
-	
-	menuMusic.setBuffer(_data->asset.getSound("Menu Music"));
-	menuMusic.setLoop(true);
-	menuMusic.play();
-	
+    menuView.reset(sf::FloatRect(0, 0, windowWidth, windowHeight));
+    
+    menuMusic.setBuffer(_data->asset.getSound("Menu Music"));
+    menuMusic.setLoop(true);
+    menuMusic.play();
+    
 }
 
 void MainMenuState::HandleInput() {
-	sf::Event event;
-	while (_data->window.pollEvent(event)) {
-		switch (event.type)
-		{
-		case sf::Event::Closed:
-			menuMusic.stop();
-			_data->window.close();
-			break;
-		case sf::Event::MouseButtonPressed:
-			menuNavigate();
-			break;
-		case sf::Event::KeyPressed:
-			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
-				switch (_state) {
-				case 1:
-					currentMenuList = menuListData["main_selection"];
-					_state = 0;
-					break;
-				case 2:
-				case 3:
-					currentMenuList = menuListData["singleplayer"];
-					_state = 1;
-					break;
-				}
-			}
-			break;
+    sf::Event event;
+    while (_data->window.pollEvent(event)) {
+        switch (event.type)
+        {
+        case sf::Event::Closed:
+            menuMusic.stop();
+            _data->window.close();
+            break;
+        case sf::Event::MouseButtonPressed:
+            menuNavigate();
+            computeMenuListLength();
+            break;
+        case sf::Event::KeyPressed:
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
+                switch (_state) {
+                case 1:
+                    currentMenuList = menuListData["main_selection"];
+                    _state = 0;
+                    break;
+                case 2:
+                case 3:
+                    currentMenuList = menuListData["singleplayer"];
+                    _state = 1;
+                    break;
+                }
+            }
+            computeMenuListLength();
+            break;
+        case sf::Event::MouseWheelMoved:
+            int wheelDelta = event.mouseWheel.delta;
+            if (currentScrollState - (wheelDelta * scrollSpeed) < 0
+                && currentScrollState + currentMenuListLength - currentMenuList.back().getRect().height - (wheelDelta * scrollSpeed) > 0
+                && currentMenuList.size()>4) {
+                currentScrollState -= (wheelDelta * scrollSpeed);
+                scrollMenuListItems(wheelDelta);
+            }
+            break;
 
-		}
-	}
+        }
+        
+    }
 }
 
 void MainMenuState::Update(float dt) {
-	for (auto& i : currentMenuList) {
-		if (_data->input.isMouseInRect(i.getRect(), _data->window)) {
-			i.setVisible();
-		}
-		else {
-			i.setTransparent();
-		}
-	}
+    for (auto& i : currentMenuList) {
+        if (_data->input.isMouseInRect(i.getRect(), _data->window)) {
+            i.setVisible();
+        }
+        else {
+            i.setTransparent();
+        }
+    }
 }
 
 void MainMenuState::Draw(float dt) {
-	_data->window.clear();
-	menuCanvasRedraw();
-	_data->window.draw(menuSprite);
-	_data->window.display();
+    _data->window.clear();
+    menuCanvasRedraw();
+    _data->window.draw(menuSprite);
+    _data->window.display();
 }
 
 void MainMenuState::Pause() {
-	menuMusic.stop();
+    menuMusic.stop();
 }
 
 void MainMenuState::Resume() {
-	_data->window.setView(menuView);
-	menuMusic.play();
+    _data->window.setView(menuView);
+    menuMusic.play();
+    currentScrollState = 0;
+    loadMapsLists();
+    computeMenuListLength();
 }
 
 void MainMenuState::menuCanvasRedraw()
 {
-	menuCanvas.clear();
-	menuCanvas.draw(_background);
-	
-	for (auto& i : currentMenuList) {
-		menuCanvas.draw(i);
-	}
-	menuSprite.setTexture(menuCanvas.getTexture());
-	menuCanvas.display();
+    menuCanvas.clear();
+    menuCanvas.draw(_background);
+    
+    for (auto& i : currentMenuList) {
+        menuCanvas.draw(i);
+    }
+    menuSprite.setTexture(menuCanvas.getTexture());
+    menuCanvas.display();
 }
 
 void MainMenuState::menuNavigate()
 {
-	switch (_state) {
-	case 0:
-		if (_data->input.isRectClicked(currentMenuList.front().getRect(), sf::Mouse::Button::Left, _data->window)) {
-			currentMenuList = menuListData["singleplayer"];
-			_state = 1;
-		}
-		else if (_data->input.isRectClicked(currentMenuList.back().getRect(), sf::Mouse::Button::Left, _data->window)) {
-			_data->machine.AddState(StateRef(new MapEditorState(this->_data)), false);
-		}
-		break;
-	case 1:
-		if (_data->input.isRectClicked(currentMenuList.front().getRect(), sf::Mouse::Button::Left, _data->window)) {
-			currentMenuList = menuListData["campaign"];
-			_state = 2;
-		}
-		else if (_data->input.isRectClicked(currentMenuList.back().getRect(), sf::Mouse::Button::Left, _data->window)) {
-			currentMenuList = menuListData["custom"];
-			_state = 3;
-		}
-		break;
-	case 2:
-		for (auto& i : menuListData["campaign"]) {
-			if (_data->input.isRectClicked(i.getRect(), sf::Mouse::Button::Left, _data->window)) {
-				_data->machine.AddState(StateRef(new GameState(this->_data, i.getText(), true)), false);
-			}
-		}
-		break;
-	case 3:
-		for (auto& i : menuListData["custom"]) {
-			if (_data->input.isRectClicked(i.getRect(), sf::Mouse::Button::Left, _data->window)) {
-				_data->machine.AddState(StateRef(new GameState(this->_data, i.getText(), false)), false);
-			}
-		}
-		break;
-	}
+    switch (_state) {
+    case 0:
+        if (_data->input.isRectClicked(currentMenuList.front().getRect(), sf::Mouse::Button::Left, _data->window)) {
+            currentMenuList = menuListData["singleplayer"];
+            _state = 1;
+        }
+        else if (_data->input.isRectClicked(currentMenuList.back().getRect(), sf::Mouse::Button::Left, _data->window)) {
+            _data->machine.AddState(StateRef(new MapEditorState(this->_data)), false);
+        }
+        break;
+    case 1:
+        if (_data->input.isRectClicked(currentMenuList.front().getRect(), sf::Mouse::Button::Left, _data->window)) {
+            currentMenuList = menuListData["campaign"];
+            _state = 2;
+        }
+        else if (_data->input.isRectClicked(currentMenuList.back().getRect(), sf::Mouse::Button::Left, _data->window)) {
+            currentMenuList = menuListData["custom"];
+            _state = 3;
+        }
+        break;
+    case 2:
+        for (auto& i : currentMenuList) {
+            if (_data->input.isRectClicked(i.getRect(), sf::Mouse::Button::Left, _data->window)) {
+                _data->machine.AddState(StateRef(new GameState(this->_data, i.getText(), true)), false);
+                currentMenuList = menuListData["campaign"];
+            }
+        }
+        break;
+    case 3:
+        for (auto& i : currentMenuList) {
+            if (_data->input.isRectClicked(i.getRect(), sf::Mouse::Button::Left, _data->window)) {        
+                _data->machine.AddState(StateRef(new GameState(this->_data, i.getText(), false)), false);
+                currentMenuList = menuListData["custom"];
+            }
+        }
+        break;
+    }
+}
+
+void MainMenuState::computeMenuListLength()
+{
+    currentMenuListLength = 0;
+    for (auto& i : currentMenuList) {
+        currentMenuListLength += i.getRect().height + rangeBetweenButtons;
+    }
+}
+
+void MainMenuState::scrollMenuListItems(const int& wheelDelta)
+{
+    for (auto& i : currentMenuList) {
+        i.setTransform(0, wheelDelta * scrollSpeed);
+    }
+}
+
+void MainMenuState::loadMapsLists()
+{
+    std::string type = "campaign";
+    for (int i = 0; i < 2; i++) {
+        menuListData[type].clear();
+        menuListData.insert({ type, std::vector<MenuItem>() });
+        int j = 0;
+        for (const auto& entry : fs::directory_iterator("maps/" + type + "/")) {
+            std::string fullName = entry.path().filename().string();
+            menuListData[type].push_back(MenuItem(fullName.substr(0, fullName.length() - 4), _data->asset.getFont("MainMenu Font"), 100, sf::Color(255, 255, 255), sf::Color(0, 0, 255)));
+            menuListData[type].back().setPosition(windowWidth / 2 - menuListData[type].back().getRect().width / 2, 150 + j * 130 + j * rangeBetweenButtons);
+            ++j;
+        }
+        type = "custom";
+    }
 }

@@ -1,27 +1,19 @@
 #pragma once
 #include "DEFINITIONS.h"
-#include <SFML/Graphics.hpp>
 #include <deque>
 #include <vector>
 #include <list>
 #include <fstream>
 #include <iostream>
+#include "BaseMap.h"
 
-#include "Game.h"
-
-class TileMap
+class TileMap : public BaseMap
 {
 public:
 	TileMap(GameDataRef data, int visibleWidth, int visibleHeight, std::string mapName, bool campaignMode);
-	TileMap(GameDataRef data, int width, int height, bool editMode);
-	void draw();
-	void drawEditMap();
 	void canvasUpdate(int x);
-	void placeObject(int x, int y, int id);
-	void changeTile(int x, int y, int id, bool blockTiles);
 	bool checkCollisionOfPoint(int x, int y);
 	int getDamageFromObject();
-	void endEditingMap(std::string filename);
 	int bottomSideDistance, rightSideDistance, leftSideDistance, mapWidth, mapHeight;
 	void mapAnimationsUpdate(float dt, int dx, int x);
 	sf::Sprite *mapSpritePtr = &mapSprite, *backgroundPtr = &background;
@@ -29,14 +21,11 @@ public:
 	int playerStartPosX = -1, playerStartPosY = -1;
 	int portalX = -1, portalY = -1;
 	bool playerWin = false;
+	void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 private:
 	int damageFromObject = 0;
-	bool _editMode;
-	int editMapWidth, editMapHeight;
-	GameDataRef _data;
+	
 	void initMap(std::string mapName, bool campaignMode);
-	void newMap();
-	std::vector<std::map<std::string, sf::VertexArray>> map;
 	std::deque<std::map<std::string, sf::VertexArray>*> mapObserve;
 	
 
@@ -46,20 +35,13 @@ private:
 
 	void setTilePosition(sf::Vertex* vertexPtr, int x, int y);
 	void setTileTextureCords(sf::Vertex* vertexPtr, int x, int y);
-	
-
-	sf::Sprite mapSprite;
-	sf::RenderTexture canvas;
-
-	
 
 	sf::Vector2i currentBlock;
 	
 
-	int tilesInRow = windowWidth/tileSize, tilesInCol = windowHeight/tileSize;
+	
 
-	int tileTextureWidth = _data->asset.getTexture("Tiles Texture").getSize().x, tileTextureHeight = _data->asset.getTexture("Tiles Texture").getSize().y;
-	int objectTextureWidth = _data->asset.getTexture("Objects Texture").getSize().x, objectTextureHeight = _data->asset.getTexture("Objects Texture").getSize().y;
+	
 
 	void reDrawCanvas();
 	sf::Sprite background;

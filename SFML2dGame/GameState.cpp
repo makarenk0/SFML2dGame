@@ -43,7 +43,7 @@ void GameState::Update(float dt) {
 
 void GameState::Draw(float dt) {
 	_data->window.clear();
-	map->draw();
+	_data->window.draw(*map);
 	player->drawPlayer();
 	if (player->gameOver||player->victory) {
 		player->drawGameOver();

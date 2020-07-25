@@ -84,7 +84,7 @@ void MapEditorState::HandleInput() {
 						case 1:
 							inputField = false;
 							mapHeightInput = std::stoi(inputHeightText);
-							map = new TileMap(_data, mapWidthInput, mapHeightInput, true);
+							map = new TileMapEditor(_data, mapWidthInput, mapHeightInput);
 							break;
 						}
 					}
@@ -228,7 +228,7 @@ void MapEditorState::Draw(float dt) {
 		_data->window.draw(explanationText);
 	}
 	else {
-		map->drawEditMap();
+		_data->window.draw(*map);
 		_data->window.draw(toolWindow);
 		_data->window.draw(arrowButton);
 		
