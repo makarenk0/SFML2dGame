@@ -42,6 +42,7 @@ void TileMap::initMap(std::string mapName, bool campaignMode) {
 	readValue(line, value);
 	mapHeight = std::stoi(value);
 	_tilesInCol = mapHeight / tileSize;
+	_tilesInRow = mapWidth / tileSize;
 
 	canvas.create(mapWidth, mapHeight);
 	idData.resize(_tilesInCol);
@@ -53,10 +54,12 @@ void TileMap::initMap(std::string mapName, bool campaignMode) {
 	background1.setTexture(_data->asset.getTexture("Background1"));
 	background1.setPosition(0, _tilesInCol * tileSize / 2);
 	background1.setScale(1, _tilesInCol * tileSize/2/ _data->asset.getTexture("Background1").getSize().y);
+	backgroundCanvas.draw(background1);
 
 	background2.setTexture(_data->asset.getTexture("Background2"));
 	background2.setPosition(0, 0);
 	background2.setScale(1, _tilesInCol * tileSize / 2 / _data->asset.getTexture("Background2").getSize().y);
+	backgroundCanvas.draw(background2);
 	backgroundCanvas.display();
 
 
@@ -95,9 +98,7 @@ void TileMap::initMap(std::string mapName, bool campaignMode) {
 		readValue(line, value);
 		objectId = std::stoi(value);
 
-		idData[i / _tilesInRow].push_back(sf::Vector2<short int>(tileId, objectId));
-
-		addTrigger(x, y, objectId);
+		idData[i / MAP_BLOCK_WIDTH].push_back(sf::Vector2<short int>(tileId, objectId));
 		//-----------------------
 		sf::Vertex* vertexTile = &block["blockTiles"][i * 4.0];
 		setTilePosition(vertexTile, x, y);
@@ -108,28 +109,29 @@ void TileMap::initMap(std::string mapName, bool campaignMode) {
 		setTileTextureCords(vertexObject, objectId % (_tileTextureWidth / tileSize), objectId / (_tileTextureWidth / tileSize));
 		
 	}
+	changeTile(playerStartPosX, playerStartPosY, 0, false);
 	file.close();
-	mapObserve.push_back(&map.at(0));
-	mapObserve.push_back(&map.at(1));
-	currentBlock.y = 0;
-	currentBlock.x = 0;
 	//test
 	reDrawCanvas();
 }
 
-void TileMap::readValue(std::string &line, std::string &value) {
-	line = line.substr(value.length() + 1, line.length());
-	value = line.substr(0, line.find(","));
-}
-
 void TileMap::addTrigger(int x, int y, short int objectId) {
-	if (objectId > 0&& objectId < 3) {
-		triggers.push_back(std::tuple<int, int, sf::IntRect>(objectId, 4 ,sf::IntRect(x*tileSize , y*tileSize, tileSize, tileSize)));
-	}
-	else if (objectId == 16) {
-		triggers.push_back(std::tuple<int, int, sf::IntRect>(objectId, 2, sf::IntRect(x * tileSize, y * tileSize, tileSize, tileSize)));
+	if (objectId == 16) {
+		//triggers.push_back(std::tuple<int, int, sf::IntRect>(objectId, 2, sf::IntRect(x * tileSize, y * tileSize, tileSize, tileSize)));
 	}
 	
+}
+
+bool TileMap::checkIfSameTrigger(int x, int y)
+{
+	x = (x / tileSize) * tileSize;
+	y = (y / tileSize) * tileSize;
+	for (auto& i : _triggers) {
+		if (i->x == x && i->y == y) {
+			return true;
+		}
+	}
+	return false;
 }
 
 void TileMap::setTilePosition(sf::Vertex* vertexPtr, int x, int y) {
@@ -137,13 +139,6 @@ void TileMap::setTilePosition(sf::Vertex* vertexPtr, int x, int y) {
 	vertexPtr[1].position = sf::Vector2f(x * tileSize + tileSize, y * tileSize);
 	vertexPtr[2].position = sf::Vector2f(x * tileSize + tileSize, y * tileSize + tileSize);
 	vertexPtr[3].position = sf::Vector2f(x * tileSize, y * tileSize + tileSize);
-}
-
-void TileMap::setTileTextureCords(sf::Vertex* vertexPtr, int x, int y) {
-	vertexPtr[0].texCoords = sf::Vector2f(x * tileSize, y * tileSize);
-	vertexPtr[1].texCoords = sf::Vector2f(x * tileSize + tileSize, y * tileSize);
-	vertexPtr[2].texCoords = sf::Vector2f(x * tileSize + tileSize, y * tileSize + tileSize);
-	vertexPtr[3].texCoords = sf::Vector2f(x * tileSize, y * tileSize + tileSize);
 }
 
 void TileMap::draw(sf::RenderTarget& target, sf::RenderStates states) const
@@ -172,51 +167,21 @@ void TileMap::mapAnimationsUpdate(float dt, int dx, int x) {
 			clouds.pop_front();
 		}
 	background.setTexture(backgroundCanvas.getTexture());
-}
 
-void TileMap::canvasUpdate(int x) {  //for rendering only part of tilemap
-	if (currentBlock.y != (int)(x / windowWidth)) {
-		currentBlock.y = x / windowWidth;
-		if (currentBlock.x == 1){
-			currentBlock.x = 0;
+	/*triggers update*/
+	for (int i = 0; i < _triggers.size(); i++) {
+		_triggers[i]->update();
+		if (_triggers[i]->getOnUpdate()) {
+			auto res = _triggers[i]->_updateData;
+			changeTile(res[0], res[1], res[2], res[3]);
+			idData[res[1]/tileSize][res[0]/tileSize].y = (short)res[2];
 		}
-		else {
-			currentBlock.x = 1;
-		}
-	}
-	
-
-	if (x % windowWidth < windowWidth / 2&& x > windowWidth) {
-		if (currentBlock.x == 0) {
-			mapObserve.push_front(&map.at(currentBlock.y - 1.0));
-			mapObserve.pop_back();
-			currentBlock.x = 1;
-			reDrawCanvas();
+		if (_triggers[i]->getOnRemove()) {
+			delete _triggers[i];
+			_triggers.erase(_triggers.begin() + i);
 		}
 		
 	}
-	else if (x % windowWidth > windowWidth / 2 && x < canvas.getSize().x - windowWidth) {
-		if (currentBlock.x == 1) {
-			mapObserve.push_back(&map.at(currentBlock.y + 1.0));
-			mapObserve.pop_front();
-			currentBlock.x = 0;
-			reDrawCanvas();
-		}
-		
-	}
-
-	
-	
-}
-
-void TileMap::reDrawCanvas() {
-
-	canvas.clear(sf::Color::Transparent);
-	for (auto &i : mapObserve) {
-		canvas.draw(i->at("blockTiles"), &_data->asset.getTexture("Tiles Texture"));
-		canvas.draw(i->at("blockObjects"), &_data->asset.getTexture("Objects Texture"));
-	}
-	mapSprite.setTexture(canvas.getTexture());
 }
 
 bool TileMap::checkCollisionOfPoint(int x, int y) {
@@ -227,16 +192,17 @@ bool TileMap::checkCollisionOfPoint(int x, int y) {
 	idBuf = idData[y / tileSize][x / tileSize];
 	if (idBuf.y == 0) {
 		int id = idBuf.x;
-		if (id == 0||id>32) {
+		if (id == 0 || (id>32&&id<36)) {
 			return false;
 		}
-		if ((id > 0 && id < 20)) {
+		if ((id > 0 && id < 21)) {
+			
 			bottomSideDistance = 0;
 			leftSideDistance = 32;
 			rightSideDistance = 0;
 			return true;
 		}
-		else if (id > 19 && id < 27) {
+		else if (id > 20 && id < 27) {
 			if (pointInPolygon(x, y, 0)) {
 				computeOffsets(x%tileSize, y%tileSize, 0);
 				rightSideDistance += 2;
@@ -250,11 +216,29 @@ bool TileMap::checkCollisionOfPoint(int x, int y) {
 				return true;
 			}
 		}
+		else if (id > 35) {
+			bottomSideDistance = 0;
+			leftSideDistance = 32;
+			rightSideDistance = 0;
+			return true;
+		}
 	}
 	else {
 		int id = idBuf.y;
 		
-		if (id > 0 && id < 3) {
+		if (id == 1) {
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z) && !checkIfSameTrigger(x, y)) {
+				_triggers.push_back(new TriggerReact(std::tuple<int, int, sf::IntRect>(1, 4, sf::IntRect(x, y, tileSize, tileSize)), 0.5));
+			}
+			if (pointInPolygon(x, y, 2)) {
+				computeOffsets(x % tileSize, y % tileSize, 2);
+				return true;
+			}
+		}
+		else if (id == 2) {
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z) && !checkIfSameTrigger(x, y)) {
+				_triggers.push_back(new TriggerReact(std::tuple<int, int, sf::IntRect>(2, 4, sf::IntRect(x, y, tileSize, tileSize)), 0.5));
+			}
 			if (pointInPolygon(x, y, 2)) {
 				computeOffsets(x % tileSize, y % tileSize, 2);
 				return true;
@@ -270,7 +254,6 @@ bool TileMap::checkCollisionOfPoint(int x, int y) {
 			return true;
 		}
 		else if (id == 25) {
-			
 			if (pointInPolygon(x, y, 4)) {
 				computeOffsets(x % tileSize, y % tileSize, 4);
 				damageFromObject = -1;
@@ -287,6 +270,34 @@ bool TileMap::checkCollisionOfPoint(int x, int y) {
 		else if (id == 28) {
 			playerWin = true;
 		}
+		else if (id == 33) {
+			if (pointInPolygon(x, y, 6)) {
+				computeOffsets(x % tileSize, y % tileSize, 6);
+				return true;
+			}
+		}
+		else if (id == 39) {
+			if (!checkIfSameTrigger(x, y)) {
+				_triggers.push_back(new TriggerReact(std::tuple<int, int, sf::IntRect>(37, 2, sf::IntRect(x, y, tileSize, tileSize)), 0));
+				_playerInventory->putInFreeSlot(37);
+			}
+		}
+		else if (id == 40) {
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z) && !checkIfSameTrigger(x, y) && _playerInventory->isSuchItem(37)) {
+				_triggers.push_back(new TriggerReact(std::tuple<int, int, sf::IntRect>(38, 4, sf::IntRect(x, y, tileSize, tileSize)), 0.5));
+				_playerInventory->removeItem(37);
+			}
+			if (pointInPolygon(x, y, 7)) {
+				computeOffsets(x % tileSize, y % tileSize, 7);
+				return true;
+			}
+		}
+		else if (id % _objectTextureWidthElements == 1 || id % _objectTextureWidthElements == 2) {
+			if (pointInPolygon(x, y, 2)) {
+				computeOffsets(x % tileSize, y % tileSize, 2);
+				return true;
+			}
+		}
 		else{
 			return false;
 		}
@@ -300,13 +311,10 @@ int TileMap::getDamageFromObject() {
 	return damageFromObject;
 }
 
-void TileMap::initMapBlocks(std::map<std::string, sf::VertexArray> &block) {
-	block["blockTiles"] = sf::VertexArray();
-	block["blockObjects"] = sf::VertexArray();
-	block["blockTiles"].resize(4.0 * _tilesInRow * _tilesInCol);
-	block["blockObjects"].resize(4.0 * _tilesInRow * _tilesInCol);
-	block["blockTiles"].setPrimitiveType(sf::Quads);
-	block["blockObjects"].setPrimitiveType(sf::Quads);
+void TileMap::reDrawCanvas()
+{
+	canvas.clear(sf::Color::Transparent);
+	BaseMap::reDrawCanvas();
 }
 
 void TileMap::initTilesHitboxes() {
@@ -376,6 +384,22 @@ void TileMap::initTilesHitboxes() {
 	hitbox.setPoint(1, sf::Vector2f(1, tileSize - 14));
 	hitbox.setPoint(2, sf::Vector2f(tileSize -1, tileSize - 14));
 	hitbox.setPoint(3, sf::Vector2f(tileSize - 1, tileSize));
+	tilesHitboxes.push_back(hitbox);
+
+	//6 barrel
+	hitbox.setPointCount(4);
+	hitbox.setPoint(0, sf::Vector2f(3, tileSize));
+	hitbox.setPoint(1, sf::Vector2f(3, 0));
+	hitbox.setPoint(2, sf::Vector2f(tileSize - 3, 0));
+	hitbox.setPoint(3, sf::Vector2f(tileSize - 3, tileSize));
+	tilesHitboxes.push_back(hitbox);
+
+	//7 door
+	hitbox.setPointCount(4);
+	hitbox.setPoint(0, sf::Vector2f(2, tileSize));
+	hitbox.setPoint(1, sf::Vector2f(2, 0));
+	hitbox.setPoint(2, sf::Vector2f(tileSize - 26, 0));
+	hitbox.setPoint(3, sf::Vector2f(tileSize - 26, tileSize));
 	tilesHitboxes.push_back(hitbox);
 }
 

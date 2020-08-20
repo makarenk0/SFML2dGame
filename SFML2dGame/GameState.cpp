@@ -6,6 +6,12 @@ GameState::GameState(GameDataRef data, std::string mapName, bool campaignMode) :
 	
 }
 
+GameState::~GameState()
+{
+	delete player;
+	delete map;
+}
+
 void GameState::Init() {
 	_data->asset.loadTexture("Player Texture", PLAYER_TEXTURE_FILEPATH);
 	int visibleWidth= windowWidth/3, visibleHeight = windowHeight/3;
@@ -53,7 +59,7 @@ void GameState::Draw(float dt) {
 
 	if (finishState||player->_finishState) {
 		_data->machine.RemoveState();
-		delete player;
-		delete map;
 	}
 }
+
+

@@ -33,7 +33,7 @@ private:
 
 	int currentMenuListLength = 0;
 	int currentScrollState = 0;
-	const int scrollSpeed = 25;
+	const int scrollSpeed = 35;
 	
 
 	sf::View menuView;
@@ -42,7 +42,9 @@ private:
 	void menuNavigate();
 	void computeMenuListLength();
 	void scrollMenuListItems(const int& wheelDelta);
+	void loadSizesVariants();
 	void loadMapsLists();
+	void initMenuSection(const std::string& menuSectionName, std::vector<std::string> items);
 
 	std::vector<MenuItem> currentMenuList;
 	std::map<std::string, std::vector<MenuItem>> menuListData;

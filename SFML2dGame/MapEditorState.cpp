@@ -1,47 +1,47 @@
 #include "MapEditorState.h"
 
-MapEditorState::MapEditorState(GameDataRef data) : _data(data)
+MapEditorState::MapEditorState(GameDataRef data, std::string customMapName) : _data(data), _customMapName(customMapName)
 {
 
+}
+
+MapEditorState::MapEditorState(GameDataRef data, int mapWidth, int mapHeigth) : _data(data), _mapWidth(mapWidth), _mapHeight(mapHeigth)
+{
+
+}
+
+MapEditorState::~MapEditorState()
+{
+	if (!_customMapName.empty()) {
+		delete map;
+	}
+	delete _quickMenuBar;
 }
 
 void MapEditorState::Init() {
 	
 	view.reset(sf::FloatRect(0, 0, windowWidth, windowHeight));
-	inputField = true;
-
-	inputWidth.setFont(_data->asset.getFont("MainMenu Font"));
-	inputWidth.setPosition(windowWidth/2-100, windowHeight/4);
-	inputWidth.setCharacterSize(100);
-
-	inputHeight.setFont(_data->asset.getFont("MainMenu Font"));
-	inputHeight.setPosition(windowWidth/2-100, windowHeight/2-25);
-	inputHeight.setCharacterSize(100);
-
-
-    explanationText.setFont(_data->asset.getFont("MainMenu Font"));
-	explanationText.setString("Map width:\n\nMap height:");
-    explanationText.setPosition(windowWidth / 5, windowHeight / 4);
-    explanationText.setCharacterSize(100);
-
-
-	inputName.setFont(_data->asset.getFont("MainMenu Font"));
-	inputName.setPosition(windowWidth / 2 - 100, windowHeight / 4);
-	inputName.setCharacterSize(100);
-	
-	
     initToolSprites();
 
-	
-	
+	if (!_customMapName.empty()) {
+		map = new TileMapEditor(_data, _customMapName);
+	}
+	else {
+		map = new TileMapEditor(_data, _mapWidth, _mapHeight);
+	}
+	_quickMenuBar = new QuickMenuBar(_data);
+
 }
 
 void MapEditorState::initToolSprites() {
 	toolWidth = 300;
-	toolCanvas.create(toolWidth, windowHeight);
-	toolCanvas.clear(sf::Color(220, 20, 60));
-	toolCanvas.display();
+	toolCanvas.create(toolWidth, windowHeight*2);
 	toolWindow.setPosition(0, 0);
+
+	sf::RenderTexture selectIndicatorTexture;
+	selectIndicatorTexture.create(38, 38);
+	selectIndicatorTexture.clear(sf::Color(255, 255, 255));
+	_selectIndicator.setTexture(selectIndicatorTexture.getTexture());
 
 	_data->asset.loadTexture("Arrow button", ARROW_BUTTON_FILEPATH);
 	_data->asset.loadTexture("Tool tiles", TOOL_TILES_FILEPATH);
@@ -53,114 +53,50 @@ void MapEditorState::initToolSprites() {
 
 	offset = toolWidth;
 
+	
 	int range = 20;
 	int tilesInARow = 5;
 	for (int i = 0; i < (_data->asset.getTexture("Tool tiles").getSize().x / tileSize * _data->asset.getTexture("Tool tiles").getSize().y / tileSize); i++) {
 		sf::Sprite sprite;
 		sprite.setTexture(_data->asset.getTexture("Tool tiles"));
-		sprite.setTextureRect(sf::IntRect(i*tileSize%_data->asset.getTexture("Tool tiles").getSize().x, (i * tileSize / _data->asset.getTexture("Tool tiles").getSize().x)*tileSize, tileSize, tileSize));
+		sprite.setTextureRect(sf::IntRect(i * tileSize % _data->asset.getTexture("Tool tiles").getSize().x, (i * tileSize / _data->asset.getTexture("Tool tiles").getSize().x) * tileSize, tileSize, tileSize));
 		sprite.setPosition(i % tilesInARow * tileSize + (i % tilesInARow + 1) * range, i / tilesInARow * tileSize + (i / tilesInARow + 1) * range);
 		toolSprites.push_back(sprite);
-		toolCanvas.draw(sprite);
 	}
+	id = 0;
+	_selectIndicator.setPosition(20 - 3, 20 - 3);
 
-	toolWindow.setTexture(toolCanvas.getTexture());
-	_data->window.draw(toolWindow);
+	redrawToolWindow();
+
 }
 
 void MapEditorState::HandleInput() {
 	sf::Event event;
-
 	while (_data->window.pollEvent(event)) {
-		if (inputField) {
-			switch (event.type) {
-				case sf::Event::KeyPressed:
-					if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)) {
-						switch (inputSizeState) {
-						case 0:
-							mapWidthInput = std::stoi(inputWidthText);
-							inputSizeState++;
-							break;
-						case 1:
-							inputField = false;
-							mapHeightInput = std::stoi(inputHeightText);
-							map = new TileMapEditor(_data, mapWidthInput, mapHeightInput);
-							break;
-						}
-					}
-					else if (sf::Keyboard::isKeyPressed(sf::Keyboard::BackSpace)) {
-						switch (inputSizeState) {
-						case 0:
-							if (inputWidthText.length() != 0) {
-								inputWidthText.pop_back();
-								inputWidth.setString(inputWidthText);
-							}
-							break;
-						case 1:
-							if (inputHeightText.length() == 0) {
-								inputWidthText.pop_back();
-								inputWidth.setString(inputWidthText);
-								inputSizeState--;
-							}
-							else {
-								inputHeightText.pop_back();
-								inputHeight.setString(inputHeightText);
-							}
-							break;
-						}
-					}
-					break;
-				case sf::Event::TextEntered:
-					if (event.text.unicode != 8) {
-						switch (inputSizeState) {
-						case 0:
-							inputWidthText += event.text.unicode;
-							inputWidth.setString(inputWidthText);
-							break;
-						case 1:
-							inputHeightText += event.text.unicode;
-							inputHeight.setString(inputHeightText);
-							break;
-						}
-					}
-					break;
-			}
-		}
-		else if (endMap) {
-			switch (event.type) {
-			case sf::Event::KeyPressed:
-				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)) {
-						if (mapName.length() == 0) {
-							map->endEditingMap("customMap");
-						}
-						else {
-							map->endEditingMap(mapName);
-						}
-						_data->machine.RemoveState();
-				}
-				break;
-			case sf::Event::TextEntered:
-				if (event.text.unicode != 27) {
-					mapName += event.text.unicode;
-					inputName.setString(mapName);
-				}
-			break;
-			}
-		}
-		else {
 			switch (event.type)
 			{
 			case sf::Event::Closed:
 				_data->window.close();
 				break;
 			case sf::Event::MouseWheelMoved:
-				this->scaleView(event.mouseWheel.delta);
+				if (_data->input.isMouseInRect(toolWindow.getTextureRect(), _data->window)) {
+					scrollToolWindow(event.mouseWheel.delta);
+				}
+				else {
+					this->scaleView(event.mouseWheel.delta);
+				}
+				
 				break;
 			case sf::Event::KeyPressed:
-				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
+				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)) {
 					_data->window.setView(sf::View(sf::FloatRect(0, 0, windowWidth, windowHeight)));
-					endMap = true;
-					explanationText.setString("Map name:");
+					if (!_customMapName.empty()) {
+						map->endEditingMap(_customMapName);
+						_data->machine.RemoveState();
+					}
+					else {
+						_data->machine.AddState(StateRef(new EnterMapNameState(this->_data, map)), true);
+					}
 				}
 				break;
 			case sf::Event::MouseMoved:
@@ -184,6 +120,16 @@ void MapEditorState::HandleInput() {
 					toolWindow.setTexture(toolCanvas.getTexture());
 
 				}
+				else if (_quickMenuBar->isPlayButtonClicked(view)) {
+					if (!_customMapName.empty()) {
+						goToTesting();
+					}
+					else {
+						_toTest = true;
+						resetCamera();
+						_data->machine.AddState(StateRef(new EnterMapNameState(this->_data, map, &_customMapName)), false);
+					}
+				}
 
 				break;
 			}
@@ -192,9 +138,11 @@ void MapEditorState::HandleInput() {
 		if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
 			if (_data->input.isSpriteClicked(toolWindow, sf::Mouse::Left, _data->window, view) && visibleTools) {
 				for (int i = 0; i < toolSprites.size(); i++) {
-					if (_data->input.isSpriteClicked(toolSprites[i], sf::Mouse::Left, _data->window, toolWindow, view)) {
-						
+					if (_data->input.isSpriteClicked(toolSprites[i], sf::Mouse::Left, _data->window, toolWindow, view, _toolWindowScroll)) {
+						_selectIndicator.setPosition(toolSprites[i].getGlobalBounds().left - 3, toolSprites[i].getGlobalBounds().top - 3);
+						redrawToolWindow();
 						id = i;
+						
 					}
 				}
 			}
@@ -202,38 +150,38 @@ void MapEditorState::HandleInput() {
 				map->placeObject(mouseX * view.getSize().x / windowWidth + (view.getCenter().x - view.getSize().x / 2), mouseY * view.getSize().y / windowHeight + (view.getCenter().y - view.getSize().y / 2), id);
 			}
 		}
-		
 	}
-}
 
 void MapEditorState::Update(float dt) {
 	mouseX = _data->input.getMousePosition(_data->window).x;  //relative to window
 	mouseY = _data->input.getMousePosition(_data->window).y;
-	if (!inputField) {
-		map->canvasUpdate(view.getCenter().x);
-		toolWindowUpdate();
-	}
+	toolWindowUpdate();
+	_quickMenuBar->update(view);
 	
 }
 
 void MapEditorState::Draw(float dt) {
 	_data->window.clear();
-	if (inputField) {
-		_data->window.draw(inputWidth);
-		_data->window.draw(inputHeight);
-		_data->window.draw(explanationText);
-	}
-	else if (endMap) {
-		_data->window.draw(inputName);
-		_data->window.draw(explanationText);
-	}
-	else {
-		_data->window.draw(*map);
-		_data->window.draw(toolWindow);
-		_data->window.draw(arrowButton);
+	
+	_data->window.draw(*map);
+	_data->window.draw(toolWindow);
+	_data->window.draw(arrowButton);
+	_data->window.draw(*_quickMenuBar);
 		
-	}
 	_data->window.display();
+}
+
+void MapEditorState::Pause()
+{
+	
+}
+
+void MapEditorState::Resume()
+{
+	if (_toTest) {
+		goToTesting();
+	}
+	resetCamera();
 }
 
 
@@ -248,7 +196,7 @@ void MapEditorState::scrollView(sf::Vector2i deltaScroll) {
 
 void MapEditorState::toolWindowUpdate() {
 
-	toolWindow.setPosition(view.getCenter().x - view.getSize().x/2, view.getCenter().y - view.getSize().y/2);   //test
+	toolWindow.setPosition(view.getCenter().x - view.getSize().x/2, view.getCenter().y - view.getSize().y/2 + (view.getSize().y * 1.0 / windowHeight * 1.0) * 1.0 *_toolWindowScroll);
 	toolWindow.setScale(view.getSize().x / windowWidth, view.getSize().y / windowHeight);
 	if (visibleTools) {
 		arrowButton.setPosition(view.getCenter().x - view.getSize().x / 2+toolWindow.getGlobalBounds().width+arrowButton.getGlobalBounds().width/2, view.getCenter().y - view.getSize().y / 2 + arrowButton.getGlobalBounds().height/2);
@@ -259,4 +207,40 @@ void MapEditorState::toolWindowUpdate() {
 		arrowButton.setScale(view.getSize().x / windowWidth, view.getSize().y / windowHeight);
 	}
 	
+}
+
+void MapEditorState::goToTesting()
+{
+	_toTest = false;
+	map->endEditingMap(_customMapName);
+	_data->machine.AddState(StateRef(new GameState(this->_data, _customMapName, false)), false);
+}
+
+void MapEditorState::resetCamera()
+{
+	view.reset(sf::FloatRect(0, 0, windowWidth, windowHeight));
+	_data->window.setView(view);
+}
+
+
+void MapEditorState::scrollToolWindow(int deltaScale) {
+	int newToolWindowScroll = _toolWindowScroll + deltaScale * _scrollSpeedCoef;
+	if (newToolWindowScroll < 5 && newToolWindowScroll + (windowHeight * 1.0 / view.getSize().y * 1.0) * 1.0 *toolWindow.getGlobalBounds().height > windowHeight) {
+		_toolWindowScroll = newToolWindowScroll;
+	}
+	
+}
+
+void MapEditorState::redrawToolWindow()
+{
+	toolCanvas.clear(sf::Color(220, 20, 60));
+	toolCanvas.draw(_selectIndicator);
+	int range = 20;
+	int tilesInARow = 5;
+	for (auto& i : toolSprites) {
+		toolCanvas.draw(i);
+	}
+	toolWindow.setTexture(toolCanvas.getTexture());
+
+	toolCanvas.display();
 }

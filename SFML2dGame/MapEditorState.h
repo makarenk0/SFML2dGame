@@ -5,31 +5,45 @@
 #include "DEFINITIONS.h"
 #include <iostream>
 #include "TileMapEditor.h"
+#include "EnterMapNameState.h"
+#include "GameState.h"
+#include "QuickMenuBar.h"
 
 class MapEditorState : public State
 {
 public:
-	MapEditorState(GameDataRef data);
+	MapEditorState(GameDataRef data, std::string customMapName);
+	MapEditorState(GameDataRef data, int mapWidth, int mapHeight);
+	~MapEditorState();
 
 	void Init();
 	void HandleInput();
 	void Update(float dt);
 	void Draw(float dt);
 
+	void Pause();
+	void Resume();
+
 private:
+	int _mapWidth, _mapHeight;
+	bool _toTest;
+	std::string _customMapName = "";
+
+
 	sf::View view;
 	
 	int mouseX, mouseY;
 
-	sf::Text inputWidth, inputHeight, explanationText, inputName;
-	std::string inputWidthText, inputHeightText, mapName="";
-	int mapWidthInput=1600, mapHeightInput=800;
+	
 	int inputSizeState = 0;
 	TileMapEditor* map;
 	GameDataRef _data;
 	sf::Sprite _background;
 
+	QuickMenuBar *_quickMenuBar;
+
 	sf::Sprite toolWindow;
+	sf::Sprite _selectIndicator;
 	sf::RenderTexture toolCanvas;
 	int toolWidth;
 	int offset;
@@ -38,9 +52,17 @@ private:
 	void scaleView(int deltaScale);
 	void scrollView(sf::Vector2i deltaScroll);
 
-	bool inputField, endMap;
+	int _toolWindowScroll = 0;
+	int _scrollSpeedCoef = 10;
+	void scrollToolWindow(int deltaScale);
+
+	void redrawToolWindow();
 
 	void toolWindowUpdate();
+
+	void goToTesting();
+
+	void resetCamera();
 
 	sf::Sprite arrowButton;
 

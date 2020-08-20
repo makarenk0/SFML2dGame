@@ -1,18 +1,26 @@
 #pragma once
-#include "TileMap.h"
 #include <tuple>
+#include <SFML\Graphics\Rect.hpp>
+#include <SFML\System\Clock.hpp>
+#include <vector>
+#include "DEFINITIONS.h"
 
 class TriggerReact {
 public:
-	TriggerReact(TileMap* map, std::tuple<int , int, sf::IntRect> trigger, int frameTime);
+	TriggerReact(std::tuple<int , int, sf::IntRect> trigger, double frameTime);
+	~TriggerReact();
 	void update();
-	bool _remove = false;
+	bool getOnUpdate();
+	bool getOnRemove();
+	std::vector<int> _updateData;
+	int x, y;
 private:
-	TileMap* _map;
 	std::tuple<int,int, sf::IntRect> _trigger;
 	sf::Clock* triggerLife;
-	int _frameTime;
+	bool _remove = false;
+	bool _update = false;
+	double _frameTime;
 	int _counter=1;
-	int objTextureWidth = 17;
+	const int objTextureWidth = 17;
 	
 };

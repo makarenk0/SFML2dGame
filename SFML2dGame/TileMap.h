@@ -6,18 +6,20 @@
 #include <fstream>
 #include <iostream>
 #include "BaseMap.h"
+#include "TriggerReact.h"
+#include "Inventory.h"
 
 class TileMap : public BaseMap
 {
 public:
 	TileMap(GameDataRef data, int visibleWidth, int visibleHeight, std::string mapName, bool campaignMode);
-	void canvasUpdate(int x);
 	bool checkCollisionOfPoint(int x, int y);
 	int getDamageFromObject();
 	int bottomSideDistance, rightSideDistance, leftSideDistance, mapWidth, mapHeight;
 	void mapAnimationsUpdate(float dt, int dx, int x);
 	sf::Sprite *mapSpritePtr = &mapSprite, *backgroundPtr = &background;
-	std::list<std::tuple<int, int , sf::IntRect>> triggers;
+	//std::vector<std::tuple<int, int , sf::IntRect>> triggers;
+	Inventory* _playerInventory;
 	int playerStartPosX = -1, playerStartPosY = -1;
 	int portalX = -1, portalY = -1;
 	bool playerWin = false;
@@ -26,31 +28,20 @@ private:
 	int damageFromObject = 0;
 	
 	void initMap(std::string mapName, bool campaignMode);
-	std::deque<std::map<std::string, sf::VertexArray>*> mapObserve;
-	
-
 	std::vector<std::vector<sf::Vector2<short int>>> idData;
 
-	void readValue(std::string &line, std::string &value);
+	std::vector<TriggerReact*> _triggers;
+
+	bool checkIfSameTrigger(int x, int y);
 
 	void setTilePosition(sf::Vertex* vertexPtr, int x, int y);
-	void setTileTextureCords(sf::Vertex* vertexPtr, int x, int y);
-
-	sf::Vector2i currentBlock;
 	
-
-	
-
-	
-
-	void reDrawCanvas();
 	sf::Sprite background;
 	sf::Sprite background1;
 	sf::Sprite background2;
 	sf::RenderTexture backgroundCanvas;
 	
-
-	void initMapBlocks(std::map<std::string, sf::VertexArray> &block);
+	void reDrawCanvas();
 
 	sf::Sprite visibleRect;
 	int _visibleWidth, _visibleHeight;

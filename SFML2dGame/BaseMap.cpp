@@ -8,21 +8,22 @@ BaseMap::BaseMap(GameDataRef data) : _data(data)
 	_tileTextureHeight = _data->asset.getTexture("Tiles Texture").getSize().y;
 	_objectTextureWidth = _data->asset.getTexture("Objects Texture").getSize().x;
 	_objectTextureHeight = _data->asset.getTexture("Objects Texture").getSize().y;
-	_tilesInRow = windowWidth / tileSize;
-	_tilesInCol = windowHeight / tileSize;
+	_objectTextureWidthElements = _objectTextureWidth / tileSize;
+	_objectTextureHeightElements = _objectTextureHeight / tileSize;
 }
+
 
 void BaseMap::changeTile(int x, int y, int id, bool blockTiles) {
 
 	if (x > 0 && x < canvas.getSize().x && y>0 && y < canvas.getSize().y) {
-		int blockNum = x / windowWidth;
+		int blockNum = x / (MAP_BLOCK_WIDTH * tileSize);
 
 		if (blockTiles) {
-			sf::Vertex* vertexTile = &map[blockNum]["blockTiles"][4.0 * (((int)(y / tileSize) * _tilesInRow) + ((x % windowWidth) / tileSize))];
+			sf::Vertex* vertexTile = &map[blockNum]["blockTiles"][4.0 * (((int)(y / tileSize) * MAP_BLOCK_WIDTH) + ((x % (MAP_BLOCK_WIDTH * tileSize)) / tileSize))];
 			setTileTextureCords(vertexTile, id % (_tileTextureWidth / tileSize), id / (_tileTextureWidth / tileSize));
 		}
 		else {
-			sf::Vertex* vertexObject = &map[blockNum]["blockObjects"][4.0 * (((int)(y / tileSize) * _tilesInRow) + ((x % windowWidth) / tileSize))];
+			sf::Vertex* vertexObject = &map[blockNum]["blockObjects"][4.0 * (((int)(y / tileSize) * MAP_BLOCK_WIDTH) + ((x % (MAP_BLOCK_WIDTH * tileSize)) / tileSize))];
 			setTileTextureCords(vertexObject, id % (_objectTextureWidth / tileSize), id / (_objectTextureWidth / tileSize));
 		}
 
@@ -37,12 +38,24 @@ void BaseMap::setTileTextureCords(sf::Vertex* vertexPtr, int x, int y) {
 	vertexPtr[3].texCoords = sf::Vector2f(x * tileSize, y * tileSize + tileSize);
 }
 
-void BaseMap::reDrawCanvas() {
+void BaseMap::initMapBlocks(std::map<std::string, sf::VertexArray>& block) {
+	block["blockTiles"] = sf::VertexArray();
+	block["blockObjects"] = sf::VertexArray();
+	block["blockTiles"].resize(4.0 * MAP_BLOCK_WIDTH * _tilesInCol);
+	block["blockObjects"].resize(4.0 * MAP_BLOCK_WIDTH * _tilesInCol);
+	block["blockTiles"].setPrimitiveType(sf::Quads);
+	block["blockObjects"].setPrimitiveType(sf::Quads);
+}
 
-	canvas.clear(sf::Color(30, 144, 255));
-	for (auto& i : mapObserve) {
-		canvas.draw(i->at("blockTiles"), &_data->asset.getTexture("Tiles Texture"));
-		canvas.draw(i->at("blockObjects"), &_data->asset.getTexture("Objects Texture"));
+void BaseMap::readValue(std::string& line, std::string& value) {
+	line = line.substr(value.length() + 1, line.length());
+	value = line.substr(0, line.find(","));
+}
+
+void BaseMap::reDrawCanvas() {
+	for (auto& i : map) {
+		canvas.draw(i.at("blockTiles"), &_data->asset.getTexture("Tiles Texture"));
+		canvas.draw(i.at("blockObjects"), &_data->asset.getTexture("Objects Texture"));
 	}
 	mapSprite.setTexture(canvas.getTexture());
 }

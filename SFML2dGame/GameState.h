@@ -10,6 +10,7 @@ class GameState : public State
 {
 public:
 	GameState(GameDataRef data, std::string mapName, bool campaignMode);
+	~GameState();
 
 	void Init();
 	void HandleInput();

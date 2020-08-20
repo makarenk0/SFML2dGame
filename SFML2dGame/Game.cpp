@@ -6,6 +6,7 @@ Game::Game(int width, int height, std::string name) {
 	_data->window.create(sf::VideoMode(width, height), name, sf::Style::Close | sf::Style::Titlebar);
 	_data->window.setFramerateLimit(FPS);
 	_data->machine.AddState(StateRef(new SplashState(this->_data)), true);
+	
 	this->run();
 }
 
@@ -20,7 +21,7 @@ void Game::run() {
 		newTime = this->_clock.getElapsedTime().asSeconds();
 		
 		frameTime = newTime - currentTime;
-
+		
 		if (frameTime > 0.25f) {
 			frameTime = 0.25f;
 		}
@@ -35,7 +36,8 @@ void Game::run() {
 		}
 
 		interpolation = accumulator / dt;
-		//std::cout << interpolation << std::endl;
+
 		this->_data->machine.GetCurrentState()->Draw(interpolation);
+		
 	}
 }

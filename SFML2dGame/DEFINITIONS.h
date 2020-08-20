@@ -4,6 +4,9 @@ const int windowWidth = 1600;
 const int windowHeight = 800;
 const int FPS = 60;
 const int tileSize = 32;
+const bool fpsCounter = true;
+
+#define MAP_BLOCK_WIDTH 50
 
 #define SPLASH_STATE_TIME 1.0f
 #define SPLASH_STATE_BACKGROUND_FILEPATH "assets/textures/SPLASH_STATE_BACKGROUND.png"
@@ -12,6 +15,9 @@ const int tileSize = 32;
 #define MAINMENU_STATE_FONT_FILEPATH "assets/fonts/MAINMENU_STATE_FONT.otf"
 #define ARROW_BUTTON_FILEPATH "assets/textures/arrow_button.png"
 #define TOOL_TILES_FILEPATH "assets/textures/toolTiles.png"
+
+#define PLAY_BUTTON_FILEPATH "assets/textures/playButton.png"
+
 
 #define BACKGROUND1_FILEPATH "assets/textures/background1.png"
 
@@ -26,6 +32,8 @@ const int tileSize = 32;
 
 #define INFOBAR_TEXTURE_FILEPATH "assets/textures/infoBar.png"
 #define HEART_TEXTURE_FILEPATH "assets/textures/heart.png"
+
+#define INVENTORY_SLOT_TEXTURE_FILEPATH "assets/textures/inventorySlot.png"
 
 #define HIT_PLAYER_SOUND_FILEPATH "assets/sounds/hit_player.wav"
 #define MENU_MUSIC_FILEPATH "assets/sounds/menu_music.wav"

@@ -2,6 +2,7 @@
 #include "Entity.h"
 #include "TriggerReact.h"
 #include "InfoBar.h"
+#include "Inventory.h"
 class Player : public Entity
 {
 public:
@@ -15,6 +16,8 @@ public:
 	void drawPlayer();
 private:
 	InfoBar* infoBar;
+	Inventory* _inventory;
+
 	sf::Clock clock;
 	sf::FloatRect cameraBounds;
 	int _visibleWidth, _visibleHeight;
@@ -26,12 +29,11 @@ private:
 	std::string victoryString = "Victory!!!       ";
 	sf::Text victoryText;
 
+	void initPlayerCamera();
 	void animatePlayer();
 	int animationIteratorX = 0, animationIteratorY = 0;
 	void updateCamera(float dt);
 	sf::Clock* gameOverClock = nullptr;
-	void checkTriggers();
-	std::list<TriggerReact> triggersBuffer;
 	int playerHealth;
 	void checkGameOver();
 	void checkVictory();

@@ -5,8 +5,11 @@ TileMapEditor::TileMapEditor(GameDataRef data, int width, int height) : BaseMap(
 	_editMapWidth = width;
 	_editMapHeight = height;
 	idData.resize(_editMapHeight / tileSize);
-	//	initMap();  // add editing created maps(for future);
 	newMap();
+}
+
+TileMapEditor::TileMapEditor(GameDataRef data, const std::string& _customMapName) : BaseMap(data) {
+	initMap(_customMapName, false);
 }
 
 void TileMapEditor::setTilePosition(sf::Vertex* vertexPtr, int x, int y) {
@@ -18,66 +21,125 @@ void TileMapEditor::setTilePosition(sf::Vertex* vertexPtr, int x, int y) {
 
 
 
+void TileMapEditor::reDrawCanvas()
+{
+	canvas.clear(sf::Color(30, 144, 255));
+	BaseMap::reDrawCanvas();
+}
+
 void TileMapEditor::newMap() {
 	canvas.create(_editMapWidth, _editMapHeight);
 	canvas.display();
+	_tilesInRow = _editMapWidth / tileSize;
 	_tilesInCol = _editMapHeight / tileSize;
 
-	for (int i = 0; i < _editMapWidth / windowWidth; i++) {
+	for (int i = 0; i < _tilesInRow / MAP_BLOCK_WIDTH; i++) {
 		std::map<std::string, sf::VertexArray> block;
 		initMapBlocks(block);
 
 		for (int y = 0; y < _tilesInCol; y++) {
-			for (int x = 0; x < _tilesInRow; x++) {
-				sf::Vertex* vertexTile = &block["blockTiles"][4.0 * (1.0 * y * _tilesInRow + x)];
-				setTilePosition(vertexTile, x + i * _tilesInRow, y);
+			for (int x = 0; x < MAP_BLOCK_WIDTH; x++) {
+				sf::Vertex* vertexTile = &block["blockTiles"][4.0 * (1.0 * y * MAP_BLOCK_WIDTH + x)];
+				setTilePosition(vertexTile, x + i * MAP_BLOCK_WIDTH, y);
 				setTileTextureCords(vertexTile, 0, 0);
 
-				sf::Vertex* vertexObject = &block["blockObjects"][4.0 * (1.0 * y * _tilesInRow + x)];
-				setTilePosition(vertexObject, x + i * _tilesInRow, y);
+				sf::Vertex* vertexObject = &block["blockObjects"][4.0 * (1.0 * y * MAP_BLOCK_WIDTH + x)];
+				setTilePosition(vertexObject, x + i * MAP_BLOCK_WIDTH, y);
 				setTileTextureCords(vertexObject, 0, 0);
 			}
 		}
 		map.push_back(block);
 	}
-	mapObserve.push_back(&map[0]);
-	mapObserve.push_back(&map[1]);
-	currentBlock.y = 0;
-	currentBlock.x = 0;
 	reDrawCanvas();
 }
 
-void TileMapEditor::canvasUpdate(int x) {  //for rendering only part of tilemap
-	if (currentBlock.y != (int)(x / windowWidth)) {
-		currentBlock.y = x / windowWidth;
-		if (currentBlock.x == 1) {
-			currentBlock.x = 0;
-		}
-		else {
-			currentBlock.x = 1;
-		}
+
+void TileMapEditor::initMap(std::string mapName, bool campaignMode) {
+	std::ifstream file;
+	if (campaignMode) {
+		file.open("maps/campaign/" + mapName + ".txt");
+	}
+	else {
+		file.open("maps/custom/" + mapName + ".txt");
 	}
 
+	std::string line;
+	std::string value = "";
+	int x, y, tileId, objectId, blockNum = 0;
+	bool solid;
 
-	if (x % windowWidth < windowWidth / 2 && x > windowWidth) {
-		if (currentBlock.x == 0) {
-			mapObserve.push_front(&map.at(currentBlock.y - 1.0));
-			mapObserve.pop_back();
-			currentBlock.x = 1;
-			reDrawCanvas();
+	//player start position
+	std::getline(file, line);
+	line = line.substr(7, line.length());
+	readValue(line, value);
+	this->playerStartPosX = std::stoi(value);
+	readValue(line, value);
+	this->playerStartPosY = std::stoi(value);
+	
+	value = "";
+	//init canvas that fits tilemap
+	std::getline(file, line);
+	line = line.substr(8, line.length());
+	readValue(line, value);
+	_editMapWidth = std::stoi(value);
+	readValue(line, value);
+	_editMapHeight = std::stoi(value);
+	_tilesInCol = _editMapHeight / tileSize;
+	_tilesInRow = _editMapWidth / tileSize;
+
+	canvas.create(_editMapWidth, _editMapHeight);
+	idData.resize(_tilesInCol);
+	canvas.clear();
+	canvas.display();
+
+	std::map<std::string, sf::VertexArray> block;
+	initMapBlocks(block);
+
+
+	for (int i = 0;; i++) {
+		value = "";
+		std::getline(file, line);
+
+		if (line == "endBlock") {
+			map.push_back(block);
+			initMapBlocks(block);
+			i = -1;
+			blockNum++;
+			continue;
 		}
 
-	}
-	else if (x % windowWidth > windowWidth / 2 && x < canvas.getSize().x - windowWidth) {
-		if (currentBlock.x == 1) {
-			mapObserve.push_back(&map.at(currentBlock.y + 1.0));
-			mapObserve.pop_front();
-			currentBlock.x = 0;
-			reDrawCanvas();
-		}
+		if (line == "end") break;
+
+		//read all values in line
+		readValue(line, value);
+		x = std::stoi(value);
+
+		readValue(line, value);
+		y = std::stoi(value);
+
+		readValue(line, value);
+		tileId = std::stoi(value);
+
+
+		readValue(line, value);
+		objectId = std::stoi(value);
+
+		idData[i / MAP_BLOCK_WIDTH].push_back(sf::Vector2<short int>(tileId, objectId));
+
+		//-----------------------
+		sf::Vertex* vertexTile = &block["blockTiles"][i * 4.0];
+		setTilePosition(vertexTile, x, y);
+		setTileTextureCords(vertexTile, tileId % (_tileTextureWidth / tileSize), tileId / (_tileTextureWidth / tileSize));
+
+		sf::Vertex* vertexObject = &block["blockObjects"][i * 4.0];
+		setTilePosition(vertexObject, x, y);
+		setTileTextureCords(vertexObject, objectId % (_tileTextureWidth / tileSize), objectId / (_tileTextureWidth / tileSize));
 
 	}
-
+	file.close();
+	//test
+	changeTile(playerStartPosX, playerStartPosY, 26, false);
+	reDrawCanvas();
 }
 
 void TileMapEditor::placeObject(int x, int y, int id) {
@@ -168,6 +230,27 @@ void TileMapEditor::placeObject(int x, int y, int id) {
 			portalX = x;
 			portalY = y;
 			break;
+		case 19:
+			changeTile(x, y, 28, false);
+			break;
+		case 20:
+			changeTile(x, y, 29, false);
+			break;
+		case 21:
+			changeTile(x, y, 30, false);
+			break;
+		case 22:
+			changeTile(x, y, 31, false);
+			break;
+		case 23:
+			changeTile(x, y, 32, false);
+			break;
+		case 24:
+			changeTile(x, y, 37, false);
+			break;
+		case 25:
+			changeTile(x, y, 38, false);
+			break;
 		}
 
 	}
@@ -176,9 +259,9 @@ void TileMapEditor::placeObject(int x, int y, int id) {
 
 void TileMapEditor::endEditingMap(std::string filename) {
 	std::ofstream customMap;
-	customMap.open("maps/custom/" + filename + ".txt");
+	customMap.open("maps/custom/" + filename + ".txt", std::ofstream::trunc);
 	customMap << "player1(" << playerStartPosX << "," << playerStartPosY << ",)" << std::endl;
-	changeTile(playerStartPosX, playerStartPosY, 0, false);
+	//changeTile(playerStartPosX, playerStartPosY, 0, false);
 	customMap << "mapBound(" << canvas.getSize().x << "," << canvas.getSize().y << ",)" << std::endl;
 
 	int blockNum = 0;
@@ -195,14 +278,5 @@ void TileMapEditor::endEditingMap(std::string filename) {
 	}
 	customMap << "end" << std::endl;
 	customMap.close();
-}
-
-void TileMapEditor::initMapBlocks(std::map<std::string, sf::VertexArray>& block) {
-	block["blockTiles"] = sf::VertexArray();
-	block["blockObjects"] = sf::VertexArray();
-	block["blockTiles"].resize(4.0 * _tilesInRow * _tilesInCol);
-	block["blockObjects"].resize(4.0 * _tilesInRow * _tilesInCol);
-	block["blockTiles"].setPrimitiveType(sf::Quads);
-	block["blockObjects"].setPrimitiveType(sf::Quads);
 }
 
