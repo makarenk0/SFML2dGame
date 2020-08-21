@@ -36,6 +36,7 @@ void MainMenuState::Init() {
     
     
     
+    
 
     #pragma region InitMenuList
     rangeBetweenButtons = 30;
@@ -62,6 +63,9 @@ void MainMenuState::Init() {
     menuMusic.setBuffer(_data->asset.getSound("Menu Music"));
     menuMusic.setLoop(true);
     menuMusic.play();
+
+    ParticlesSystem _particles;
+    _particles.testParticles(_data->window);
     
 }
 

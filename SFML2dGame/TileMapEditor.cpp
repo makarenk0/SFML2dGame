@@ -251,6 +251,24 @@ void TileMapEditor::placeObject(int x, int y, int id) {
 		case 25:
 			changeTile(x, y, 38, false);
 			break;
+		case 26:
+			changeTile(x, y, 39, false);
+			break;
+		case 27:
+			changeTile(x, y, 40, false);
+			break;
+		case 28:
+			changeTile(x, y, 41, false);
+			break;
+		case 29:
+			changeTile(x, y, 42, false);
+			break;
+		case 30:
+			changeTile(x, y, 45, false);
+			break;
+		case 31:
+			changeTile(x, y, 46, false);
+			break;
 		}
 
 	}

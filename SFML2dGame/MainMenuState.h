@@ -3,6 +3,7 @@
 #include "Game.h"
 #include "MenuItem.h"
 #include "DEFINITIONS.h"
+#include "ParticlesSystem.h"
 #include <iostream>
 #include <list>
 #include <filesystem>
