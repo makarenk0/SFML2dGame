@@ -17,12 +17,11 @@ void ParticlesSystem::particleTransform(std::vector <Particle>const& part, float
 	}
 }
 
-void ParticlesSystem::testParticles(sf::RenderWindow& window) {
-	sf::ContextSettings set;
-	set.antialiasingLevel = 8; // Устанавливаем уровень сглаживания, хотя можно и без него обойтись
 
-	//sf::RenderWindow window(sf::VideoMode(windowWidth, windowHeight), "PS", sf::Style::Default, set);
-
+void ParticlesSystem::testParticles(GameDataRef data) {
+	
+	data->window.popGLStates();
+	data->window.setActive(true);
 
 	std::vector <Particle> all_part; // Вектор частиц
 
@@ -61,10 +60,10 @@ void ParticlesSystem::testParticles(sf::RenderWindow& window) {
 	float frame_time = 0.1f;
 
 	sf::Event event;
-	while (window.isOpen()) {
-		while (window.pollEvent(event)) {
+	while (data->window.isOpen()) {
+		while (data->window.pollEvent(event)) {
 			if (event.type == sf::Event::Closed)
-				window.close();
+				data->window.close();
 		}
 		if (sf::Mouse::isButtonPressed(sf::Mouse::Left))// Тригер для нажатия ЛКМ
 			LB_press = 1;
@@ -75,7 +74,7 @@ void ParticlesSystem::testParticles(sf::RenderWindow& window) {
 
 		for (auto it = 0; it < all_part.size(); ++it) {
 			if (LB_press) { // Если нажата ЛКМ, то добавляем силы к частицам
-				sf::Vector2f mouse = sf::Vector2f(sf::Mouse::getPosition(window)); // Записываем координаты мышки относительно нашего окна
+				sf::Vector2f mouse = sf::Vector2f(sf::Mouse::getPosition(data->window)); // Записываем координаты мышки относительно нашего окна
 				sf::Vector2f vec1((mouse - all_part[it].getPosition()) * (G / pow(getDistance(std::move(mouse), all_part[it].getPosition()) + 5, 2)));
 				sf::Vector2f vec2(-all_part[it].getSpeed() * 100.0f);
 				all_part[it].addForce(vec1);
@@ -118,7 +117,7 @@ void ParticlesSystem::testParticles(sf::RenderWindow& window) {
 		glPopMatrix();
 
 		glFlush();
-		window.display(); // Отображаем кадр.
+		data->window.display(); // Отображаем кадр.
 		frame_time = clock.restart().asSeconds(); // Записываем прошедшее время и перезапускаем часы.
 
 	}

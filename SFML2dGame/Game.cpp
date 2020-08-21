@@ -5,6 +5,8 @@
 Game::Game(int width, int height, std::string name) {
 	_data->window.create(sf::VideoMode(width, height), name, sf::Style::Close | sf::Style::Titlebar);
 	_data->window.setFramerateLimit(FPS);
+	_data->window.setActive(false);  //disable openGL calls
+	_data->window.pushGLStates(); //save openGl states
 	_data->machine.AddState(StateRef(new SplashState(this->_data)), true);
 	
 	this->run();

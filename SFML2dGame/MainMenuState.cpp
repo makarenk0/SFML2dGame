@@ -65,7 +65,8 @@ void MainMenuState::Init() {
     menuMusic.play();
 
     ParticlesSystem _particles;
-    _particles.testParticles(_data->window);
+    _particles.testParticles(_data);
+    
     
 }
 
@@ -135,6 +136,7 @@ void MainMenuState::Draw(float dt) {
     _data->window.clear();
     menuCanvasRedraw();
     _data->window.draw(menuSprite);
+    
     _data->window.display();
 }
 
@@ -174,6 +176,7 @@ void MainMenuState::menuNavigate()
             currentMenuList = menuListData["map_editor"];
             _state = 4;
             //_data->machine.AddState(StateRef(new MapEditorState(this->_data)), false);
+            
         }
         break;
     case 1:

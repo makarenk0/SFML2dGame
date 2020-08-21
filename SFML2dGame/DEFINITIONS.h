@@ -6,7 +6,7 @@ const int FPS = 60;
 const int tileSize = 32;
 const bool fpsCounter = true;
 
-const int NUMB_OF_BLOCK = 100;
+const int NUMB_OF_BLOCK = 10;
 const int PART_IN_BLOCK = 1000;
 const float G = 300000;
 
