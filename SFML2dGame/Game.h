@@ -4,6 +4,7 @@
 #include "StateMachine.h"
 #include "AssetManager.h"
 #include "InputManager.h"
+#include "ParticlesSystem.h"
 
 
 
@@ -12,6 +13,7 @@ struct GameData {
 	sf::RenderWindow window;
 	AssetManager asset;
 	InputManager input;
+	ParticlesSystem particles;
 };
 typedef std::shared_ptr<GameData> GameDataRef;
 class Game

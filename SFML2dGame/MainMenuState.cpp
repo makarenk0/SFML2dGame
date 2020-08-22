@@ -64,10 +64,11 @@ void MainMenuState::Init() {
     menuMusic.setLoop(true);
     menuMusic.play();
 
-    ParticlesSystem _particles;
-    _particles.testParticles(_data);
-    
-    
+    _data->particles.addParticlesEffect(new BloodParticlesSet(100, 100, 500, _data->window));
+
+    _parallelParticles = std::thread(&MainMenuState::particlesUpdateParallelThread, this);
+
+
 }
 
 void MainMenuState::HandleInput() {
@@ -122,6 +123,7 @@ void MainMenuState::HandleInput() {
 }
 
 void MainMenuState::Update(float dt) {
+   
     for (auto& i : currentMenuList) {
         if (_data->input.isMouseInRect(i.getRect(), _data->window)) {
             i.setVisible();
@@ -130,13 +132,20 @@ void MainMenuState::Update(float dt) {
             i.setTransparent();
         }
     }
+    
+    
+    
 }
 
 void MainMenuState::Draw(float dt) {
+    _dt = dt;
     _data->window.clear();
+   
     menuCanvasRedraw();
     _data->window.draw(menuSprite);
+   
     
+    _data->particles.draw(_data->window);
     _data->window.display();
 }
 
@@ -174,9 +183,7 @@ void MainMenuState::menuNavigate()
         }
         else if (_data->input.isRectClicked(currentMenuList.back().getRect(), sf::Mouse::Button::Left, _data->window)) {
             currentMenuList = menuListData["map_editor"];
-            _state = 4;
-            //_data->machine.AddState(StateRef(new MapEditorState(this->_data)), false);
-            
+            _state = 4; 
         }
         break;
     case 1:
@@ -296,4 +303,11 @@ void MainMenuState::initMenuSection(const std::string& menuSectionName, std::vec
         }
     }
 
+}
+
+void MainMenuState::particlesUpdateParallelThread()
+{
+    while (true) {
+        _data->particles.update(_data->window, _dt);
+    }
 }

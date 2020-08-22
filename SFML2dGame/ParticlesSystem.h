@@ -6,19 +6,26 @@
 #include "Particle.h"
 #include "DEFINITIONS.h"
 #include <SFML/Window.hpp>
-#include <SFML/OpenGL.hpp>
-#include "Game.h"
+#include <list>
+#include "ParticlesSet.h"
 
-//using namespace std;
+
 using std::byte;
 
 class ParticlesSystem
 {
 private:
 	float modOfVector(sf::Vector2f& v);
-	float getDistance(sf::Vector2f&& v1, sf::Vector2f&& v2) noexcept;
-	void particleTransform(std::vector <Particle>const& part, float**& i_vec);
+	void particleTransform(std::vector<Particle>const& part, float**& i_vec, int numb_of_block, int part_in_block);
+	std::vector<ParticlesSet*> _all_sets;
+
 public:
-	void testParticles(GameDataRef data); //sf::RenderWindow& window
+
+	
+	//void testParticles(sf::RenderWindow& window); //sf::RenderWindow& window
+
+	void addParticlesEffect(ParticlesSet* p_set);
+	void update(sf::RenderWindow& window, float dt);
+	void draw(sf::RenderWindow& window);
 };
 

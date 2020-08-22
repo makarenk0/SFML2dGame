@@ -1,12 +1,16 @@
 #pragma once
+#include <iostream>
+#include <list>
+#include <filesystem>
+#include <thread>
+
 #include "State.h"
 #include "Game.h"
 #include "MenuItem.h"
 #include "DEFINITIONS.h"
 #include "ParticlesSystem.h"
-#include <iostream>
-#include <list>
-#include <filesystem>
+#include "BloodParticlesSet.h"
+
 namespace fs = std::filesystem;
 
 class MainMenuState : public State
@@ -39,6 +43,10 @@ private:
 
 	sf::View menuView;
 	int _state;
+	float _dt;
+
+	std::thread _parallelParticles;
+
 	void menuCanvasRedraw();
 	void menuNavigate();
 	void computeMenuListLength();
@@ -46,6 +54,7 @@ private:
 	void loadSizesVariants();
 	void loadMapsLists();
 	void initMenuSection(const std::string& menuSectionName, std::vector<std::string> items);
+	void particlesUpdateParallelThread();
 
 	std::vector<MenuItem> currentMenuList;
 	std::map<std::string, std::vector<MenuItem>> menuListData;
