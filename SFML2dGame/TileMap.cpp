@@ -229,6 +229,7 @@ bool TileMap::checkCollisionOfPoint(int x, int y) {
 		if (id == 1) {
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z) && !checkIfSameTrigger(x, y)) {
 				_triggers.push_back(new TriggerReact(std::tuple<int, int, sf::IntRect>(1, 4, sf::IntRect(x, y, tileSize, tileSize)), 0.5));
+				_data->particles.addParticlesEffect(new CoinsParticlesSet((x/tileSize) * tileSize + 10, (y/tileSize) * tileSize + 2 * tileSize/3, 4000, 1000, _data->window));
 			}
 			if (pointInPolygon(x, y, 2)) {
 				computeOffsets(x % tileSize, y % tileSize, 2);
@@ -238,6 +239,7 @@ bool TileMap::checkCollisionOfPoint(int x, int y) {
 		else if (id == 2) {
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z) && !checkIfSameTrigger(x, y)) {
 				_triggers.push_back(new TriggerReact(std::tuple<int, int, sf::IntRect>(2, 4, sf::IntRect(x, y, tileSize, tileSize)), 0.5));
+				_data->particles.addParticlesEffect(new CoinsParticlesSet((x / tileSize) * tileSize + 10, (y / tileSize) * tileSize + 2 * tileSize / 3, 4000, 1000, _data->window));
 			}
 			if (pointInPolygon(x, y, 2)) {
 				computeOffsets(x % tileSize, y % tileSize, 2);

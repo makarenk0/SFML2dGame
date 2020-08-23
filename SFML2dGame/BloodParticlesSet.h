@@ -4,7 +4,7 @@
 class BloodParticlesSet : public ParticlesSet
 {
 public:
-	BloodParticlesSet(int x, int y, float lifeTime, sf::RenderWindow& window);
+	BloodParticlesSet(int x, int y, float lifeTime, float timeOffset, sf::RenderWindow& window);
 	virtual void update(float dt);
 private:
 	const float G = 30000;

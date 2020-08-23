@@ -8,6 +8,7 @@
 #include "BaseMap.h"
 #include "TriggerReact.h"
 #include "Inventory.h"
+#include "CoinsParticlesSet.h"
 
 class TileMap : public BaseMap
 {

@@ -1,7 +1,7 @@
 #include "ParticlesSet.h"
 
 
-ParticlesSet::ParticlesSet(int x, int y, int numb_of_block, int part_in_block, float lifeTime) : _x(x), _y(y), _numb_of_block(numb_of_block), _part_in_block(part_in_block), _lifeTime(lifeTime)
+ParticlesSet::ParticlesSet(int x, int y, int numb_of_block, int part_in_block, float lifeTime, float timeOffset) : _x(x), _y(y), _numb_of_block(numb_of_block), _part_in_block(part_in_block), _lifeTime(lifeTime + timeOffset), _timeOffset(timeOffset)
 {
 	coords = new float* [_numb_of_block];
 	for (int i = 0; i < _numb_of_block; ++i)

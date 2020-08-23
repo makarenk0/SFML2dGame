@@ -30,5 +30,7 @@ private:
 	sf::Sprite _background;
 	std::thread _parallelParticles;
 	bool finishState = false;
+
+	void particlesUpdateParallelThread();
 };
 

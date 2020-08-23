@@ -4,12 +4,14 @@
 
 GameState::GameState(GameDataRef data, std::string mapName, bool campaignMode) : _data(data), _mapName(mapName), _campaignMode(campaignMode)
 {
+	
 }
 
 GameState::~GameState()
 {
 	delete player;
 	delete map;
+	_parallelParticles.join();
 }
 
 void GameState::Init() {
@@ -17,7 +19,7 @@ void GameState::Init() {
 	int visibleWidth= windowWidth/3, visibleHeight = windowHeight/3;
 	map = new TileMap(_data, visibleWidth, visibleHeight, _mapName, _campaignMode);
 	player = new Player("Player Texture", map, _data, visibleWidth, visibleHeight);
-	
+	_parallelParticles = std::thread(&GameState::particlesUpdateParallelThread, this);
 }
 
 void GameState::HandleInput() {
@@ -45,7 +47,6 @@ void GameState::HandleInput() {
 
 void GameState::Update(float dt) {
 	player->updatePlayer(dt);
-	_data->particles.update(_data->window, dt);
 }
 
 void GameState::Draw(float dt) {
@@ -60,6 +61,13 @@ void GameState::Draw(float dt) {
 
 	if (finishState||player->_finishState) {
 		_data->machine.RemoveState();
+	}
+}
+
+void GameState::particlesUpdateParallelThread()
+{
+	while (!finishState && !player->_finishState) {
+		_data->particles.update(_data->window, 0);
 	}
 }
 

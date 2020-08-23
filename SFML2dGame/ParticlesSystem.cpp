@@ -185,11 +185,13 @@ void ParticlesSystem::addParticlesEffect(ParticlesSet* p_set)
 void ParticlesSystem::update(sf::RenderWindow& window, float dt)
 {
 	for (int i = 0; i < _all_sets.size(); i++) {
-		_all_sets[i]->update(dt);
-		if (_all_sets[i]->_lifeTimer.getElapsedTime().asMilliseconds() > _all_sets[i]->_lifeTime) {
-			ParticlesSet* buf = _all_sets[i];
-			_all_sets.erase(_all_sets.begin() + i);
-			delete buf;
+		if (_all_sets[i]->_lifeTimer.getElapsedTime().asMilliseconds() > _all_sets[i]->_timeOffset) {
+			_all_sets[i]->update(dt);
+			if (_all_sets[i]->_lifeTimer.getElapsedTime().asMilliseconds() > _all_sets[i]->_lifeTime) {
+				ParticlesSet* buf = _all_sets[i];
+				_all_sets.erase(_all_sets.begin() + i);
+				delete buf;
+			}
 		}
 	}
 }
@@ -200,26 +202,28 @@ void ParticlesSystem::draw(sf::RenderWindow& window)
 
 	
 	for (auto& set : _all_sets) {
-		glPushMatrix();
+		if (set->_lifeTimer.getElapsedTime().asMilliseconds() > set->_timeOffset) {
+			glPushMatrix();
 
-		particleTransform(set->all_part, set->coords, set->_numb_of_block, set->_part_in_block); // Переносим обновленные данные из вектора в массив
+			particleTransform(set->all_part, set->coords, set->_numb_of_block, set->_part_in_block); // Переносим обновленные данные из вектора в массив
 
-		glEnableClientState(GL_VERTEX_ARRAY);
-		glEnableClientState(GL_COLOR_ARRAY);
+			glEnableClientState(GL_VERTEX_ARRAY);
+			glEnableClientState(GL_COLOR_ARRAY);
 
-		for (int i = 0; i < set->_numb_of_block; ++i) {
-			glVertexPointer(2, GL_FLOAT, 0, set->coords[i]); // Передаем кол-во координат точки, формат координат и указатель на массив координат
-			glColorPointer(3, GL_UNSIGNED_BYTE, 0, set->colors[i]); // Тоже самое, только для цвета.
-			glDrawArrays(GL_POINTS, 0, set->_part_in_block); // Функция отображения массива элементов. Передаем тип отображаемого объекта, смещение до следующего элемента (у нас 0, т.к. массив линейный) и размер массива.
+			for (int i = 0; i < set->_numb_of_block; ++i) {
+				glVertexPointer(2, GL_FLOAT, 0, set->coords[i]); // Передаем кол-во координат точки, формат координат и указатель на массив координат
+				glColorPointer(3, GL_UNSIGNED_BYTE, 0, set->colors[i]); // Тоже самое, только для цвета.
+				glDrawArrays(GL_POINTS, 0, set->_part_in_block); // Функция отображения массива элементов. Передаем тип отображаемого объекта, смещение до следующего элемента (у нас 0, т.к. массив линейный) и размер массива.
 
+			}
+
+			glDisableClientState(GL_VERTEX_ARRAY);
+			glDisableClientState(GL_COLOR_ARRAY);
+
+			glPopMatrix();
+
+			glFlush();
 		}
-
-		glDisableClientState(GL_VERTEX_ARRAY);
-		glDisableClientState(GL_COLOR_ARRAY);
-
-		glPopMatrix();
-
-		glFlush();
 	}
 	window.setActive(false);
 	window.resetGLStates();
