@@ -3,6 +3,8 @@
 #include "TriggerReact.h"
 #include "InfoBar.h"
 #include "Inventory.h"
+#include "BloodParticlesSet.h"
+
 class Player : public Entity
 {
 public:

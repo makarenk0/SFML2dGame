@@ -1,9 +1,9 @@
 #include "GameState.h"
 
 
+
 GameState::GameState(GameDataRef data, std::string mapName, bool campaignMode) : _data(data), _mapName(mapName), _campaignMode(campaignMode)
 {
-	
 }
 
 GameState::~GameState()
@@ -45,6 +45,7 @@ void GameState::HandleInput() {
 
 void GameState::Update(float dt) {
 	player->updatePlayer(dt);
+	_data->particles.update(_data->window, dt);
 }
 
 void GameState::Draw(float dt) {
@@ -54,7 +55,7 @@ void GameState::Draw(float dt) {
 	if (player->gameOver||player->victory) {
 		player->drawGameOver();
 	}
-
+	_data->particles.draw(_data->window);
 	_data->window.display();
 
 	if (finishState||player->_finishState) {

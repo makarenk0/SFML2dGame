@@ -64,9 +64,9 @@ void MainMenuState::Init() {
     menuMusic.setLoop(true);
     menuMusic.play();
 
-    _data->particles.addParticlesEffect(new BloodParticlesSet(100, 100, 500, _data->window));
+    //_data->particles.addParticlesEffect(new BloodParticlesSet(100, 100, 700, _data->window));
 
-    _parallelParticles = std::thread(&MainMenuState::particlesUpdateParallelThread, this);
+    //_parallelParticles = std::thread(&MainMenuState::particlesUpdateParallelThread, this);
 
 
 }
@@ -145,7 +145,7 @@ void MainMenuState::Draw(float dt) {
     _data->window.draw(menuSprite);
    
     
-    _data->particles.draw(_data->window);
+    //_data->particles.draw(_data->window);
     _data->window.display();
 }
 

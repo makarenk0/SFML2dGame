@@ -79,6 +79,8 @@ void Player::updatePlayer(float dt){
 			updateCamera(dt);
 
 			if (playerHealth != _entityHealth) {
+				//_data->particles.addParticlesEffect(new BloodParticlesSet(20, 20, 700, _data->window));
+				_data->particles.addParticlesEffect(new BloodParticlesSet(50, 50, 700, _data->window));
 				jumpPlayer();
 				if (infoBar->changeHealth(_entityHealth - playerHealth))
 					y = _map->mapHeight;

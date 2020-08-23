@@ -196,9 +196,9 @@ void ParticlesSystem::update(sf::RenderWindow& window, float dt)
 
 void ParticlesSystem::draw(sf::RenderWindow& window)
 {
-	window.popGLStates();
 	window.setActive(true);
 
+	
 	for (auto& set : _all_sets) {
 		glPushMatrix();
 
@@ -222,6 +222,6 @@ void ParticlesSystem::draw(sf::RenderWindow& window)
 		glFlush();
 	}
 	window.setActive(false);
-	window.pushGLStates();
+	window.resetGLStates();
 }
 

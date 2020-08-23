@@ -17,17 +17,21 @@ BloodParticlesSet::BloodParticlesSet(int x, int y, float lifeTime, sf::RenderWin
 			all_part.push_back(tmp);
 			coords[i][2 * j] = tmp.getPosition().x; // Добавляем координаты частицы в массив
 			coords[i][2 * j + 1] = tmp.getPosition().y;
+			
+			colors[i][3 * j] = 255;
+			colors[i][3 * j + 1] = 0;
+			colors[i][3 * j + 2] = 0;
 		}
 	}
 
-	////////////////// OpenGL settings
-	glEnable(GL_POINT_SMOOTH); //Три функции приводят нашу квадратную точку к круглой
+	// OpenGL settings
+	glEnable(GL_POINT_SMOOTH);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	glPointSize(3); // Размер точки - 1 пиксель
-	glOrtho(0, windowWidth, windowHeight, 0, 1, -1); // Ориентирование нашей сцены
-	//////////////////////////////////
+	glPointSize(3); 
+	glOrtho(0, windowWidth, windowHeight, 0, 1, -1);
+
 
 	window.setActive(false);
 	window.pushGLStates();
@@ -37,7 +41,7 @@ void BloodParticlesSet::update(float dt) {
 	for (auto it = 0; it < all_part.size(); ++it) {
 		sf::Vector2f mouse = sf::Vector2f(_x + _startAreaWidth/2 + 1, _y + 2); // Записываем координаты мышки относительно нашего окна
 		sf::Vector2f vec1(-(mouse - all_part[it].getPosition()) * (G / pow(getDistance(std::move(mouse), all_part[it].getPosition()) + 5, 2)));
-		sf::Vector2f vec2(-all_part[it].getSpeed() * 10.0f);
+		sf::Vector2f vec2(-all_part[it].getSpeed() * _resistence);
 		all_part[it].addForce(vec1);
 		all_part[it].addForce(vec2);
 

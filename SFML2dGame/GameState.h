@@ -4,7 +4,10 @@
 #include "TileMap.h"
 #include "Player.h"
 #include "DEFINITIONS.h"
+#include "ParticlesSystem.h"
+#include "BloodParticlesSet.h"
 #include <iostream>
+#include <thread>
 
 class GameState : public State
 {
@@ -25,6 +28,7 @@ private:
 	Player* player = nullptr;
 	GameDataRef _data;
 	sf::Sprite _background;
+	std::thread _parallelParticles;
 	bool finishState = false;
 };
 
