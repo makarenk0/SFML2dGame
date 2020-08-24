@@ -1,17 +1,22 @@
 #pragma once
 #include "Game.h"
 #include <iostream>
-class InfoBar
+class InfoBar : public sf::Drawable
 {
 public:
-	InfoBar(int x, int y, int width, int heigth, GameDataRef data, sf::Vector2f cameraSize, int startHealth);
+	InfoBar(int visibleWidth, int visibleHeigth, int width, int heigth, GameDataRef data, sf::Vector2f cameraSize, int startHealth, int overallCheatsNumber);
 	void updateInfoBar(int x, int y);
-	void drawInfoBar();
 	bool changeHealth(int delta);
 	void setHealth(int health);
+	void increaseCheastsCounter();
 private:
 	sf::Sprite _background;
 	int _width, _height;
+	int _visibleWidth, _visibleHeigth;
+
+	int _overallCheastsNumber, _currentCheastsPicked;
+	sf::Text _cheastsCounter;
+
 	GameDataRef _data;
 	sf::RenderTexture canvasInfo;
 	sf::Sprite spriteInfo;
@@ -32,7 +37,7 @@ private:
 			for (int i = 0; i < healthCount; i++) {
 				sf::Texture* bufTexture = new sf::Texture(heartTexture);
 				sf::Sprite heart(*bufTexture);
-				heart.setPosition(i * 15 + i * 30 + 15, 50);
+				heart.setPosition(i * 15 + i * 30 + 15, 21);
 				health.push_back(std::pair<sf::Sprite, sf::Texture*>(heart, bufTexture));
 			}
 		}
@@ -50,7 +55,7 @@ private:
 					for (int i = 0; i < health.size() + deltaHealth; i++) {
 						sf::Texture* bufTexture = new sf::Texture(heartTexture);
 						sf::Sprite heart(*bufTexture);
-						heart.setPosition(i * 15 + i * 30 + 15, 50);
+						heart.setPosition(i * 15 + i * 30 + 15, 21);
 						health.push_back(std::pair<sf::Sprite, sf::Texture*>(heart, bufTexture));
 					}
 				}
@@ -79,6 +84,9 @@ private:
 	};
 	Health playerHealth;
 	void reDrawCanvas();
+	void initCheatsCounter();
+
+	virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 
 	
 	

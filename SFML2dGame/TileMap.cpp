@@ -97,6 +97,7 @@ void TileMap::initMap(std::string mapName, bool campaignMode) {
 
 		readValue(line, value);
 		objectId = std::stoi(value);
+		if (objectId == 1 || objectId == 2) { ++_overallCheatsNumber; }
 
 		idData[i / MAP_BLOCK_WIDTH].push_back(sf::Vector2<short int>(tileId, objectId));
 		//-----------------------
@@ -230,6 +231,7 @@ bool TileMap::checkCollisionOfPoint(int x, int y) {
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z) && !checkIfSameTrigger(x, y)) {
 				_triggers.push_back(new TriggerReact(std::tuple<int, int, sf::IntRect>(1, 4, sf::IntRect(x, y, tileSize, tileSize)), 0.5));
 				_data->particles.addParticlesEffect(new CoinsParticlesSet((x/tileSize) * tileSize + 10, (y/tileSize) * tileSize + 2 * tileSize/3, 4000, 1000, _data->window));
+				_playerInfoBar->increaseCheastsCounter();
 			}
 			if (pointInPolygon(x, y, 2)) {
 				computeOffsets(x % tileSize, y % tileSize, 2);
@@ -240,6 +242,7 @@ bool TileMap::checkCollisionOfPoint(int x, int y) {
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z) && !checkIfSameTrigger(x, y)) {
 				_triggers.push_back(new TriggerReact(std::tuple<int, int, sf::IntRect>(2, 4, sf::IntRect(x, y, tileSize, tileSize)), 0.5));
 				_data->particles.addParticlesEffect(new CoinsParticlesSet((x / tileSize) * tileSize + 10, (y / tileSize) * tileSize + 2 * tileSize / 3, 4000, 1000, _data->window));
+				_playerInfoBar->increaseCheastsCounter();
 			}
 			if (pointInPolygon(x, y, 2)) {
 				computeOffsets(x % tileSize, y % tileSize, 2);
@@ -278,23 +281,23 @@ bool TileMap::checkCollisionOfPoint(int x, int y) {
 				return true;
 			}
 		}
-		else if (id == 39 || id == 41 || id == 43 || id == 47) {
+		else if (id == 39 || id == 41 || id == 43 || id == 47 || id == 49 || id == 51 || id == 73 || id == 81) {
 			if (!checkIfSameTrigger(x, y)) {
-				_triggers.push_back(new TriggerReact(std::tuple<int, int, sf::IntRect>(id - 2, 2, sf::IntRect(x, y, tileSize, tileSize)), 0));
-				_playerInventory->putInFreeSlot(id-2);
+				_triggers.push_back(new TriggerReact(std::tuple<int, int, sf::IntRect>(id - id/18, 2, sf::IntRect(x, y, tileSize, tileSize)), 0));
+				_playerInventory->putInFreeSlot(id- id/18);
 			}
 		}
-		else if (id == 40 || id == 42 || id == 44 || id == 48) {
-			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z) && !checkIfSameTrigger(x, y) && _playerInventory->isSuchItem(id - 3)) {
-				_triggers.push_back(new TriggerReact(std::tuple<int, int, sf::IntRect>(id - 2, 4, sf::IntRect(x, y, tileSize, tileSize)), 0.5));
-				_playerInventory->removeItem(id - 3);
+		else if (id == 40 || id == 42 || id == 44 || id == 48 || id == 50 || id == 52 || id == 74 || id == 82) {
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z) && !checkIfSameTrigger(x, y) && _playerInventory->isSuchItem(id - id / 18 - 1)) {
+				_triggers.push_back(new TriggerReact(std::tuple<int, int, sf::IntRect>(id - id/18, 4, sf::IntRect(x, y, tileSize, tileSize)), 0.5));
+				_playerInventory->removeItem(id - id/18 - 1);
 			}
 			if (pointInPolygon(x, y, 7)) {
 				computeOffsets(x % tileSize, y % tileSize, 7);
 				return true;
 			}
 		}
-		else if (id % _objectTextureWidthElements == 1 || id % _objectTextureWidthElements == 2) {
+		else if ((id % _objectTextureWidthElements == 1 || id % _objectTextureWidthElements == 2) && id < 68) {
 			if (pointInPolygon(x, y, 2)) {
 				computeOffsets(x % tileSize, y % tileSize, 2);
 				return true;

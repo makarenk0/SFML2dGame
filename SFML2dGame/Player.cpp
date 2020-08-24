@@ -10,7 +10,8 @@ Player::Player(std::string textureName, TileMap* map, GameDataRef data, int visi
 	initPlayerCamera();
 
 	playerHealth = 5;
-	infoBar = new InfoBar(0,0, 500, 100, _data, playerCamera.getSize(), playerHealth);
+	infoBar = new InfoBar(_visibleWidth, _visibleHeight, 500, 100, _data, playerCamera.getSize(), playerHealth, _map->_overallCheatsNumber);
+	_map->_playerInfoBar = infoBar;
 	_inventory = new Inventory(_data);
 	_map->_playerInventory = _inventory;
 
@@ -86,7 +87,7 @@ void Player::updatePlayer(float dt){
 				playerHealth = _entityHealth;
 
 			}
-			infoBar->updateInfoBar(playerCamera.getCenter().x - _visibleWidth / 2, playerCamera.getCenter().y + _visibleHeight / 2); // TO DO refactor, deriving from sf::Drawable
+			infoBar->updateInfoBar(playerCamera.getCenter().x - _visibleWidth / 2, playerCamera.getCenter().y - _visibleHeight / 2);
 			_inventory->update(playerCamera);
 			checkGameOver();
 			checkVictory();
@@ -157,7 +158,7 @@ void Player::animatePlayer() {
 
 void Player::drawPlayer() {
 	drawEntity();
-	infoBar->drawInfoBar();
+	_data->window.draw(*infoBar);
 	_data->window.draw(*_inventory);
 }
 

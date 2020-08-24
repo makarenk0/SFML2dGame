@@ -9,6 +9,7 @@
 #include "TriggerReact.h"
 #include "Inventory.h"
 #include "CoinsParticlesSet.h"
+#include "InfoBar.h"
 
 class TileMap : public BaseMap
 {
@@ -20,10 +21,15 @@ public:
 	void mapAnimationsUpdate(float dt, int dx, int x);
 	sf::Sprite *mapSpritePtr = &mapSprite, *backgroundPtr = &background;
 	//std::vector<std::tuple<int, int , sf::IntRect>> triggers;
+
 	Inventory* _playerInventory;
+	InfoBar* _playerInfoBar;
+
 	int playerStartPosX = -1, playerStartPosY = -1;
 	int portalX = -1, portalY = -1;
 	bool playerWin = false;
+	int _overallCheatsNumber = 0;
+
 	void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 private:
 	int damageFromObject = 0;
