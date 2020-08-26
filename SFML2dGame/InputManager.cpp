@@ -35,6 +35,17 @@ bool InputManager::isRectClicked(sf::IntRect rect, sf::Mouse::Button button, sf:
 	return false;
 }
 
+bool InputManager::isRectClicked(sf::IntRect rect, sf::Mouse::Button button, sf::RenderWindow& window, sf::View view)
+{
+	if (sf::Mouse::isButtonPressed(button)) {
+		sf::IntRect clickRect((rect.left - view.getCenter().x + view.getSize().x / 2) / view.getSize().x * windowWidth, (rect.top - view.getCenter().y + view.getSize().y / 2) / view.getSize().y * windowHeight, rect.width / view.getSize().x * windowWidth, rect.height / view.getSize().y * windowHeight);
+		if (clickRect.contains(sf::Mouse::getPosition(window))) {
+			return true;
+		}
+	}
+	return false;
+}
+
 bool InputManager::isSpriteClicked(sf::Sprite sprite, sf::Mouse::Button button, sf::RenderWindow& window, sf::View view) {
 	if (sf::Mouse::isButtonPressed(button)) {
 		sf::IntRect clickRect((sprite.getGlobalBounds().left - view.getCenter().x + view.getSize().x / 2) / view.getSize().x * windowWidth, ( sprite.getGlobalBounds().top - view.getCenter().y + view.getSize().y / 2)/view.getSize().y * windowHeight, sprite.getGlobalBounds().width / view.getSize().x * windowWidth, sprite.getGlobalBounds().height / view.getSize().y * windowHeight);
@@ -45,7 +56,7 @@ bool InputManager::isSpriteClicked(sf::Sprite sprite, sf::Mouse::Button button, 
 	return false;
 }
 
-bool InputManager::isSpriteClicked(sf::Sprite sprite, sf::Mouse::Button button, sf::RenderWindow& window, sf::Sprite relativeTo, sf::View view, float coef) {
+bool InputManager::isSpriteClicked(sf::Sprite sprite, sf::Mouse::Button button, sf::RenderWindow& window, sf::View view, float coef) {
 	
 	if (sf::Mouse::isButtonPressed(button)) {
 		sf::IntRect clickRect(sprite.getGlobalBounds().left, sprite.getGlobalBounds().top + coef, sprite.getGlobalBounds().width, sprite.getGlobalBounds().height);
@@ -72,6 +83,15 @@ bool InputManager::isTitleClicked(sf::Text text, sf::Mouse::Button button, sf::R
 bool InputManager::isMouseInRect(sf::IntRect rect, sf::RenderWindow& window)
 {
 	if (rect.contains(sf::Mouse::getPosition(window))) {
+		return true;
+	}
+	return false;
+}
+
+bool InputManager::isMouseInRect(sf::IntRect rect, sf::RenderWindow& window, sf::View view)
+{
+	sf::IntRect boundsRect((rect.left - view.getCenter().x + view.getSize().x / 2) / view.getSize().x * windowWidth, (rect.top - view.getCenter().y + view.getSize().y / 2) / view.getSize().y * windowHeight, rect.width / view.getSize().x * windowWidth, rect.height / view.getSize().y * windowHeight);
+	if (boundsRect.contains(sf::Mouse::getPosition(window))) {
 		return true;
 	}
 	return false;

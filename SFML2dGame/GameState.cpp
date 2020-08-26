@@ -66,8 +66,13 @@ void GameState::Draw(float dt) {
 
 void GameState::particlesUpdateParallelThread()
 {
+	sf::Clock timer;
 	while (!finishState && !player->_finishState) {
-		_data->particles.update(_data->window, 0);
+		if (timer.getElapsedTime().asMilliseconds() > 1) {
+			_data->particles.update(_data->window, 0);
+			timer.restart();
+		}
+		
 	}
 }
 

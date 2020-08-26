@@ -73,6 +73,7 @@ void MapEditorState::initToolSprites() {
 void MapEditorState::HandleInput() {
 	sf::Event event;
 	while (_data->window.pollEvent(event)) {
+		_noHandledEvents = true;
 			switch (event.type)
 			{
 			case sf::Event::Closed:
@@ -99,19 +100,24 @@ void MapEditorState::HandleInput() {
 					}
 				}
 				break;
-			case sf::Event::MouseMoved:
-				if (sf::Mouse::isButtonPressed(sf::Mouse::Right)) {
-					this->scrollView(sf::Vector2i(_data->input.getMousePosition(_data->window).x - mouseX, _data->input.getMousePosition(_data->window).y - mouseY));
-				}
-				break;
 			case sf::Event::MouseButtonPressed:
-				if (_data->input.isSpriteClicked(arrowButton, sf::Mouse::Left, _data->window, view)) {
+				if (_data->input.isSpriteClicked(toolWindow, sf::Mouse::Left, _data->window, view) && visibleTools) {
+					for (int i = 0; i < toolSprites.size(); i++) {
+						if (_data->input.isSpriteClicked(toolSprites[i], sf::Mouse::Left, _data->window, view, _toolWindowScroll)) {
+							_selectIndicator.setPosition(toolSprites[i].getGlobalBounds().left - 3, toolSprites[i].getGlobalBounds().top - 3);
+							redrawToolWindow();
+							id = i;
+
+						}
+					}
+				}
+				else if (_data->input.isSpriteClicked(arrowButton, sf::Mouse::Left, _data->window, view)) {
 					if (visibleTools) {
 						toolCanvas.clear(sf::Color::Transparent);
 						visibleTools = false;
 					}
 					else {
-						toolCanvas.clear(sf::Color(220, 20, 60));
+						toolCanvas.clear(sf::Color(54, 54, 54, 240));
 						for (auto& i : toolSprites) {
 							toolCanvas.draw(i);
 						}
@@ -130,24 +136,19 @@ void MapEditorState::HandleInput() {
 						_data->machine.AddState(StateRef(new EnterMapNameState(this->_data, map, &_customMapName)), false);
 					}
 				}
-
-				break;
-			}
-		}
-
-		if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
-			if (_data->input.isSpriteClicked(toolWindow, sf::Mouse::Left, _data->window, view) && visibleTools) {
-				for (int i = 0; i < toolSprites.size(); i++) {
-					if (_data->input.isSpriteClicked(toolSprites[i], sf::Mouse::Left, _data->window, toolWindow, view, _toolWindowScroll)) {
-						_selectIndicator.setPosition(toolSprites[i].getGlobalBounds().left - 3, toolSprites[i].getGlobalBounds().top - 3);
-						redrawToolWindow();
-						id = i;
-						
-					}
+				else if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && _noHandledEvents && !_data->input.isMouseInRect(sf::IntRect(toolWindow.getGlobalBounds()), _data->window, view)) {
+					map->placeObject(mouseX * view.getSize().x / windowWidth + (view.getCenter().x - view.getSize().x / 2), mouseY * view.getSize().y / windowHeight + (view.getCenter().y - view.getSize().y / 2), id);
 				}
-			}
-			else {
-				map->placeObject(mouseX * view.getSize().x / windowWidth + (view.getCenter().x - view.getSize().x / 2), mouseY * view.getSize().y / windowHeight + (view.getCenter().y - view.getSize().y / 2), id);
+				_noHandledEvents = false;
+				break;
+			case sf::Event::MouseMoved:
+				if (sf::Mouse::isButtonPressed(sf::Mouse::Right)) {
+					this->scrollView(sf::Vector2i(_data->input.getMousePosition(_data->window).x - mouseX, _data->input.getMousePosition(_data->window).y - mouseY));
+				}
+				else if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && _noHandledEvents && !_data->input.isMouseInRect(sf::IntRect(toolWindow.getGlobalBounds()), _data->window, view)) {
+					map->placeObject(mouseX * view.getSize().x / windowWidth + (view.getCenter().x - view.getSize().x / 2), mouseY * view.getSize().y / windowHeight + (view.getCenter().y - view.getSize().y / 2), id);
+				}
+				break;
 			}
 		}
 	}
@@ -161,7 +162,7 @@ void MapEditorState::Update(float dt) {
 }
 
 void MapEditorState::Draw(float dt) {
-	_data->window.clear();
+	_data->window.clear(sf::Color(169, 169, 169));
 	
 	_data->window.draw(*map);
 	_data->window.draw(toolWindow);
@@ -233,7 +234,7 @@ void MapEditorState::scrollToolWindow(int deltaScale) {
 
 void MapEditorState::redrawToolWindow()
 {
-	toolCanvas.clear(sf::Color(220, 20, 60));
+	toolCanvas.clear(sf::Color(54, 54, 54, 240));
 	toolCanvas.draw(_selectIndicator);
 	int range = 20;
 	int tilesInARow = 5;

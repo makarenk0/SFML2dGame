@@ -28,7 +28,7 @@ private:
 	int _mapWidth, _mapHeight;
 	bool _toTest;
 	std::string _customMapName = "";
-
+	bool _noHandledEvents;
 
 	sf::View view;
 	

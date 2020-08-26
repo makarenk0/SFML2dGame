@@ -18,6 +18,7 @@ private:
 	TileMapEditor* _map;
 	TileMapEditor* _backgroundMap;
 	sf::Clock triggerLife;
+	sf::Text _explanationText;
 	sf::Text _mapNameDisplay;
 	std::string _mapName = "";
 	std::string* _mapNamePtr;

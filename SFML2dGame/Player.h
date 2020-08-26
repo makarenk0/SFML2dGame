@@ -24,11 +24,11 @@ private:
 	sf::FloatRect cameraBounds;
 	int _visibleWidth, _visibleHeight;
 	int counter = 0;
-	std::string gameOverString = "Game Over    ";
+	std::string gameOverString = "Game Over   ";
 	std::string gameOverStringBuf="";
 	sf::Text gameOverText;
 
-	std::string victoryString = "Victory!!!       ";
+	std::string victoryString = "Victory    ";
 	sf::Text victoryText;
 
 	void initPlayerCamera();

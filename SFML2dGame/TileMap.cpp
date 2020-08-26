@@ -175,7 +175,7 @@ void TileMap::mapAnimationsUpdate(float dt, int dx, int x) {
 		if (_triggers[i]->getOnUpdate()) {
 			auto res = _triggers[i]->_updateData;
 			changeTile(res[0], res[1], res[2], res[3]);
-			idData[res[1]/tileSize][res[0]/tileSize].y = (short)res[2];
+			idData[res[1]/tileSize][res[0]/tileSize].y = (short)(res[2] + res[2]/18);
 		}
 		if (_triggers[i]->getOnRemove()) {
 			delete _triggers[i];
@@ -217,6 +217,20 @@ bool TileMap::checkCollisionOfPoint(int x, int y) {
 				return true;
 			}
 		}
+		else if (id > 37 && id < 45) {
+			if (pointInPolygon(x, y, 0)) {
+				computeOffsets(x % tileSize, y % tileSize, 0);
+				rightSideDistance += 2;
+				return true;
+			}
+		}
+		else if (id > 44 && id < 51) {
+			if (pointInPolygon(x, y, 1)) {
+				computeOffsets(x % tileSize, y % tileSize, 1);
+				leftSideDistance -= 2;
+				return true;
+			}
+		}
 		else if (id > 35) {
 			bottomSideDistance = 0;
 			leftSideDistance = 32;
@@ -226,7 +240,9 @@ bool TileMap::checkCollisionOfPoint(int x, int y) {
 	}
 	else {
 		int id = idBuf.y;
-		
+		if (id == 0) {
+			return false;
+		}
 		if (id == 1) {
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z) && !checkIfSameTrigger(x, y)) {
 				_triggers.push_back(new TriggerReact(std::tuple<int, int, sf::IntRect>(1, 4, sf::IntRect(x, y, tileSize, tileSize)), 0.5));
@@ -297,7 +313,7 @@ bool TileMap::checkCollisionOfPoint(int x, int y) {
 				return true;
 			}
 		}
-		else if ((id % _objectTextureWidthElements == 1 || id % _objectTextureWidthElements == 2) && id < 68) {
+		else if (id == 19 || id == 36 || id == 54 || id == 20 || id == 38 || id == 55) {
 			if (pointInPolygon(x, y, 2)) {
 				computeOffsets(x % tileSize, y % tileSize, 2);
 				return true;

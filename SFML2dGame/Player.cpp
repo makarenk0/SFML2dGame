@@ -24,9 +24,6 @@ Player::Player(std::string textureName, TileMap* map, GameDataRef data, int visi
 	victoryText.setFillColor(sf::Color(34, 139, 34));
 	victoryText.setCharacterSize(200);
 
-
-	
-
 }
 
 void Player::updatePlayer(float dt){
@@ -37,7 +34,7 @@ void Player::updatePlayer(float dt){
 				if (gameOver) {
 					gameOverStringBuf += gameOverString.at(counter);
 					gameOverText.setString(gameOverStringBuf);
-					if (counter > 10) {
+					if (counter == gameOverString.size()-1) {
 						_data->machine.RemoveState();
 						_finishState = true;
 					}
@@ -45,12 +42,12 @@ void Player::updatePlayer(float dt){
 				else {
 					gameOverStringBuf += victoryString.at(counter);
 					victoryText.setString(gameOverStringBuf);
-					if (counter > 14) {
+					if (counter == victoryString.size()-1) {
 						_data->machine.RemoveState();
 						_finishState = true;
 					}
 				}
-				counter++;
+				++counter;
 					
 			}
 			
@@ -99,8 +96,8 @@ void Player::checkGameOver() {
 	if (y + h > _map->mapHeight - tileSize / 2) {
 		infoBar->setHealth(0);
 		gameOver = true;
-		gameOverText.setPosition(sf::Vector2f(playerCamera.getCenter().x - 110, playerCamera.getCenter().y - 50));
 		gameOverText.setScale(playerCamera.getSize().x / windowWidth, playerCamera.getSize().y / windowHeight);
+		gameOverText.setPosition(sf::Vector2f(playerCamera.getCenter().x - playerCamera.getSize().x/2 + 80, playerCamera.getCenter().y - 50));
 		gameOverClock = new sf::Clock;
 		gameOverSound.setBuffer(_data->asset.getSound("Gameover Sound"));
 		gameOverSound.play();
@@ -110,7 +107,7 @@ void Player::checkGameOver() {
 void Player::checkVictory() {
 	if (_map->playerWin) {
 		victory = true;
-		victoryText.setPosition(sf::Vector2f(playerCamera.getCenter().x - 100, playerCamera.getCenter().y - 50));
+		victoryText.setPosition(playerCamera.getCenter().x - playerCamera.getSize().x / 2 + 120, playerCamera.getCenter().y - 50);
 		victoryText.setScale(playerCamera.getSize().x / windowWidth, playerCamera.getSize().y / windowHeight);
 		gameOverClock = new sf::Clock;
 		victorySound.setBuffer(_data->asset.getSound("Victory Sound"));

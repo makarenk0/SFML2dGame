@@ -23,7 +23,14 @@ void EnterMapNameState::Init()
 	_mapNameDisplay.setFont(_data->asset.getFont("MainMenu Font"));
 	_mapNameDisplay.setFillColor(sf::Color(255, 255, 255));
 	_mapNameDisplay.setCharacterSize(100);
-	_mapNameDisplay.setPosition(windowWidth / 3, windowHeight / 3);
+	_mapNameDisplay.setPosition(windowWidth / 3, windowHeight / 3 + 50);
+
+	_explanationText = sf::Text();
+	_explanationText.setFont(_data->asset.getFont("MainMenu Font"));
+	_explanationText.setFillColor(sf::Color(255, 255, 255));
+	_explanationText.setCharacterSize(100);
+	_explanationText.setPosition(370, windowHeight / 3 - 100);
+	_explanationText.setString("Enter map name:");
 }
 
 void EnterMapNameState::HandleInput()
@@ -63,7 +70,7 @@ void EnterMapNameState::Update(float dt)
 	if (triggerLife.getElapsedTime().asMilliseconds() > 100) {
 		int x = rand() % windowWidth;
 		int y = rand() % windowHeight;
-		int id = rand() % 55;
+		int id = rand() % 89;
 		_backgroundMap->placeObject(x, y, id);
 		triggerLife.restart();
 	}
@@ -73,6 +80,7 @@ void EnterMapNameState::Draw(float dt)
 {
 	_data->window.clear();
 	_data->window.draw(*_backgroundMap);
+	_data->window.draw(_explanationText);
 	_data->window.draw(_mapNameDisplay);
 	_data->window.display();
 }

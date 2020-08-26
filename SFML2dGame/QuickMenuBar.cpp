@@ -10,7 +10,7 @@
 QuickMenuBar::QuickMenuBar(GameDataRef data) : _data(data)
 {
 	canvas.create(quickMenuSpriteW, quickMenuSpriteH);
-	canvas.clear(sf::Color(238, 130, 238));
+	canvas.clear(sf::Color::Transparent);
 	
 	playButton = sf::Sprite(_data->asset.getTexture("Play Button"));
 	playButton.setPosition(5, 10);
