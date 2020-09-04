@@ -18,11 +18,12 @@ Consists of "StateMachine" class that controls state switching, removing, adding
 Many of these functions are overloaded to handle events relatively to some objects or taking into account camera position/scale.
 ### 4. Particles system
 "ParticlesSystem" class has vector with pointers to all particles set which are currently updating and displaying on a map. Also there are 3 methods that: adds new particles set to vector, updates all sets in vector, draws all sets from vector. Particles are drawed directly in the window and for this is used OpenGL (more efficient than drawing from SFML). Since SFML is built on OpenGL after each drawing is used resetGLStates() method to avoid conflicts with drawing.<br>
-"Particle" class store data of one particle(mass, position, speed, forces)
+"Particle" class objects store data of one particle(mass, position, speed, forces)
 ![alt text](https://drive.google.com/uc?id=1Elv1rQRvgHV2V02eemgvWTLK6HEFUyUL)
 ![alt text](https://drive.google.com/uc?id=1EdkwxpoRUBBNf0VEvuTZAyooZ-VB4tLD)<br>
 "ParticlesSet" is an abstract class that stores common data and methods. Due to polimorphism objects of classes like "BloodParticlesSet", "CoinsParticlesSet" which override "ParticlesSet" can be stored in one data structure and this simplifies drawing and updating.<br>
-![alt text](https://drive.google.com/uc?id=1FGpU3o8vegalY1Un3ZsutzzkTqM1bbHe)
+![alt text](https://drive.google.com/uc?id=1FGpU3o8vegalY1Un3ZsutzzkTqM1bbHe)<br>
+Moreover, particles update is computing in different thread because of process complexity.
 ## High-level stuff
 ### 1. Map
 In "BaseMap" implemented frequently used methods like tiles texture changing, map blocks initialization, map canvas redrawing and main map data structures.
@@ -35,5 +36,5 @@ In "BaseMap" implemented frequently used methods like tiles texture changing, ma
 ### 3. Trigger system
 With collison is also checked tile trigger(if there is one). Player could press "X" button which could trigger some action. For example when you open chest or open door with key in your inventory. "TriggerReact" is a class for temporary created object which contains trigger information. "TriggerReact" is taking trigger coordinates, time offset from start, duration, number of frames to animate.
 ## Release
-Release on itch.io : https://makarenk0.itch.io/chest-hunter
+Release on itch.io : https://makarenk0.itch.io/chest-hunter <br>
 Android porting soon.
