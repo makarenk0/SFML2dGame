@@ -21,16 +21,16 @@ Many of these functions are overloaded to handle events relatively to some objec
 "Particle" class store data of one particle(mass, position, speed, forces)
 ![alt text](https://drive.google.com/uc?id=1Elv1rQRvgHV2V02eemgvWTLK6HEFUyUL)
 ![alt text](https://drive.google.com/uc?id=1EdkwxpoRUBBNf0VEvuTZAyooZ-VB4tLD)<br>
-"ParticlesSet" is an abstract class that stores common data and methods. Due to polimorphism objects of classes like "BloodParticlesSet", "CoinsParticlesSet" which override "ParticlesSet" can be stored in one data structure and this simplifies drawing and updating.
+"ParticlesSet" is an abstract class that stores common data and methods. Due to polimorphism objects of classes like "BloodParticlesSet", "CoinsParticlesSet" which override "ParticlesSet" can be stored in one data structure and this simplifies drawing and updating.<br>
 ![alt text](https://drive.google.com/uc?id=1FGpU3o8vegalY1Un3ZsutzzkTqM1bbHe)
 ## High-level stuff
 ### 1. Map
 In "BaseMap" implemented frequently used methods like tiles texture changing, map blocks initialization, map canvas redrawing and main map data structures.
-"Tilemap" is used in in game state and "TileMapEditor" for editing and creating your own maps. State machine allows rapidly switch this modes for example when you want to test your map and don't leave editor mode.
+"Tilemap" is used in in game state and "TileMapEditor" for editing and creating your own maps. State machine allows rapidly switch this modes for example when you want to test your map and don't leave editor mode.<br>
 ![alt text](https://drive.google.com/uc?id=1jYafbb8rYj0hD8BSzWXFHoHuBxYqD10k)
 ### 2. Player
 "Player" is responsible for sprite drawing, information bar, inventory, victory/gameover check, player animations. It aggregates "InfoBar", "Inventory".
-"Player" is derived from "Entity", because "Entity" implements physics, collision check.
+"Player" is derived from "Entity", because "Entity" implements physics, collision check.<br>
 ![alt text](https://drive.google.com/uc?id=1Ob1NTo7_7IXlR8BHkF5vgennuajcpndM)
 ### 3. Trigger system
 With collison is also checked tile trigger(if there is one). Player could press "X" button which could trigger some action. For example when you open chest or open door with key in your inventory. "TriggerReact" is a class for temporary created object which contains trigger information. "TriggerReact" is taking trigger coordinates, time offset from start, duration, number of frames to animate.
