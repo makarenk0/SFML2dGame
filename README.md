@@ -19,7 +19,7 @@ Many of these functions are overloaded to handle events relatively to some objec
 ### 4. Particles system
 "ParticlesSystem" class has vector with pointers to all particles set which are currently updating and displaying on a map. Also there are 3 methods that: adds new particles set to vector, updates all sets in vector, draws all sets from vector. Particles are drawed directly in the window and for this is used OpenGL (more efficient than drawing from SFML). Since SFML is built on OpenGL after each drawing is used resetGLStates() method to avoid conflicts with drawing.<br>
 "Particle" class objects store data of one particle(mass, position, speed, forces)
-![alt text](img/ParticleSystem1.png)
+![alt text](img/ParticlesSystem1.png)
 ![alt text](img/GoldAnimation.gif)<br>
 "ParticlesSet" is an abstract class that stores common data and methods. Due to polimorphism objects of classes like "BloodParticlesSet", "CoinsParticlesSet" which override "ParticlesSet" can be stored in one data structure and this simplifies drawing and updating.<br>
 ![alt text](img/ParticleSet.png)<br>
