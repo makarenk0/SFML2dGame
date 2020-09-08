@@ -1,0 +1,207 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="AssetManager" Collapsed="true">
+    <Position X="15.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAEBQAAAgAAAAgAAAAAAACAAABIABAACAAAAAA=</HashCode>
+      <FileName>AssetManager.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BaseMap" Collapsed="true">
+    <Position X="8.5" Y="4.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAEAAABAAAAgAAAANAQEACAAAAQCBIAYAEAQIAAAI=</HashCode>
+      <FileName>BaseMap.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BloodParticlesSet" Collapsed="true">
+    <Position X="0.5" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEAAIACAAAAAABAAAAAAAAAAAAAAAAAAAAAACIAFAAA=</HashCode>
+      <FileName>BloodParticlesSet.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CoinsParticlesSet" Collapsed="true">
+    <Position X="2.75" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEAAIACAAAAAABAAAAAAAQAAAAAACAAAAQAACAAFAAA=</HashCode>
+      <FileName>CoinsParticlesSet.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="EnterMapNameState" Collapsed="true">
+    <Position X="9.75" Y="3.25" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAQAAACABAEAAgEAAAAAAAIAAAAACEAAAEICAAAAgAA=</HashCode>
+      <FileName>EnterMapNameState.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Entity" Collapsed="true">
+    <Position X="14" Y="8" Width="1.5" />
+    <NestedTypes>
+      <Struct Name="Entity::EntityData" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Entity.h</NewMemberFileName>
+        </TypeIdentifier>
+      </Struct>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>EAAAABAABCAEAAAIEAAIgAAAAAAIAAgAVEhgAACABkA=</HashCode>
+      <FileName>Entity.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Game" Collapsed="true">
+    <Position X="22.5" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAgAABAAAAAAAAAAAAAAAAAgAQAAAAAQAAAAAAAA=</HashCode>
+      <FileName>Game.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="GameState" Collapsed="true">
+    <Position X="5.25" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAEACADCAAAwAAAAAAAAAAAAgAAUABAAASAQAIIAA=</HashCode>
+      <FileName>GameState.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="InfoBar" Collapsed="true">
+    <Position X="19.5" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gAAIAAAAhBCAAAAMAAJAQAAAABAAIDACAAAIAQAIAAA=</HashCode>
+      <FileName>InfoBar.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="InputManager" Collapsed="true">
+    <Position X="12.75" Y="0.5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAgAIAAAAAAAAAAAABAAgAAAQA=</HashCode>
+      <FileName>InputManager.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Inventory" Collapsed="true">
+    <Position X="12.25" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAEAAABAAQQIBEAAIgAAAACAAAACBAAAAIAgBEAAA=</HashCode>
+      <FileName>Inventory.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MainMenuState" Collapsed="true">
+    <Position X="0.75" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>DAQggiCQBAAAB4IYAAAACIAAAAAAAuAACAACAQgIAAE=</HashCode>
+      <FileName>MainMenuState.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MapEditorState" Collapsed="true">
+    <Position X="3" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QASgEAaBBiIEAgAcQAAgAMAAAESAoAAIgQASAYgAggg=</HashCode>
+      <FileName>MapEditorState.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MenuItem" Collapsed="true">
+    <Position X="14" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAgAACBAABAAAAIACACCCAQAAAAIBAAAAAAAAAA=</HashCode>
+      <FileName>MenuItem.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Particle">
+    <Position X="18.25" Y="0.75" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AIgAIYAAAAAASAAAAAAAIAAAAACAAQABAAAAAAAEAAA=</HashCode>
+      <FileName>Particle.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ParticlesSet" Collapsed="true">
+    <Position X="1.75" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAIBIQIQAAAAAAAAAAAEABAAACAAgEAAAAEAAQ=</HashCode>
+      <FileName>ParticlesSet.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ParticlesSystem">
+    <Position X="20.5" Y="0.75" Width="3" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAACAAABAAAIAAAAAAAAAAAAAAAEAAAAEAAA=</HashCode>
+      <FileName>ParticlesSystem.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Player" Collapsed="true">
+    <Position X="14" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>hAAAAABAEAAABDDIAiAEIQGAAAAgAEGAIACKASAIAMA=</HashCode>
+      <FileName>Player.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="QuickMenuBar" Collapsed="true">
+    <Position X="12.25" Y="3" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAQBAAACAAAAAIAAAACAAAQEAIAAAAAAAAEACA=</HashCode>
+      <FileName>QuickMenuBar.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SplashState" Collapsed="true">
+    <Position X="7.5" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAACABAAAAgAgAAAAAAAAAAAAQAAAAAACAQAAAAA=</HashCode>
+      <FileName>SplashState.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="State">
+    <Position X="5.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQgAACAAAAAAgAAAAAAAAAAAAAAAAAAAAACAAgAAAA=</HashCode>
+      <FileName>State.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="StateMachine" Collapsed="true">
+    <Position X="7.75" Y="0.5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AEAAgBAAAAAAAAFAAAAgAAAAAAIAAAABAAAAAAAACAA=</HashCode>
+      <FileName>StateMachine.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TileMap" Collapsed="true">
+    <Position X="7.25" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAQAIAEAQFAEAMAABIMFEACICBBAKgQAAAKNQAKYgg=</HashCode>
+      <FileName>TileMap.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TileMapEditor" Collapsed="true">
+    <Position X="10" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAgAAAAACEQgAMAAAAAAEAAECAAACIAAAAIAAAAQAA=</HashCode>
+      <FileName>TileMapEditor.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TriggerReact" Collapsed="true">
+    <Position X="15.75" Y="3" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAgAAAAIAEQAAACAAIEAIAAAAAAAABwAAAEUAA=</HashCode>
+      <FileName>TriggerReact.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Struct Name="GameData">
+    <Position X="12" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAgABAAAAAAAADAIAAAAAAAAAAA=</HashCode>
+      <FileName>Game.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Typedef Name="GameDataRef" Collapsed="true">
+    <Position X="13.75" Y="5" Width="3.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Game.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Typedef Name="StateRef" Collapsed="true">
+    <Position X="18" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>StateMachine.h</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
